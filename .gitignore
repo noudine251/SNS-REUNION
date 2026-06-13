@@ -1,2 +1,7 @@
 delete-firestore.js
 node_modules/
+.claude/
+*.env
+*.env.txt
+mes firebases_config.env.txt
+gitignore/
