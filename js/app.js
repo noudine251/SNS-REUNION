@@ -154,9 +154,12 @@ window.showPage = function (name) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => { if (n.getAttribute('onclick')?.includes("'" + name + "'")) n.classList.add('active'); });
+  const nc = document.getElementById('navCollapse');
+  if (nc && nc.classList.contains('show')) { const bsc = bootstrap.Collapse.getInstance(nc); if (bsc) bsc.hide(); }
   populateSelects();
   if (name === 'retard') populateReunionSelect();
 };
+
 
 window.openModal = openModal;
 window.closeModal = closeModal;
@@ -189,6 +192,21 @@ window.saveRetard = async function () {
 
 window.saveBeneficiaire = async function () {
   const aId = document.getElementById('be-adherent').value; if (!aId) return alert("Adhérent requis.");
+  const editId = document.getElementById('be-edit-id').value;
+  if (editId) {
+    const b = state.beneficiaires.find(x => x.id === editId); if (!b) return;
+    b.adherentId = aId; b.adherentNom = aNom(getA(aId));
+    b.date = document.getElementById('be-date').value;
+    b.type = document.getElementById('be-type').value;
+    b.valeur = document.getElementById('be-valeur').value;
+    b.desc = document.getElementById('be-desc').value;
+    b.statut = document.getElementById('be-statut').value;
+    try { await setDoc(doc(db, 'beneficiaires', b.id), b); } catch (e) { console.error('editBeneficiaire', e); return alert("Erreur lors de la sauvegarde."); }
+    document.getElementById('be-edit-id').value = '';
+    document.getElementById('modal-beneficiaire').querySelector('.modal-title').textContent = '🎁 Bénéficiaire';
+    closeModal('modal-beneficiaire'); clearF(['be-date', 'be-valeur', 'be-desc']);
+    return;
+  }
   const maxOrdre = state.beneficiaires.length ? Math.max(...state.beneficiaires.map(b => b.ordre || 0)) : 0;
   const newId = uid();
   const newB = { id: newId, adherentId: aId, adherentNom: aNom(getA(aId)), date: document.getElementById('be-date').value, type: document.getElementById('be-type').value, valeur: document.getElementById('be-valeur').value, desc: document.getElementById('be-desc').value, statut: document.getElementById('be-statut').value, ordre: maxOrdre + 1, locked: false, createdAt: new Date().toISOString() };
@@ -196,6 +214,19 @@ window.saveBeneficiaire = async function () {
   state.beneficiaires.push(newB);
   closeModal('modal-beneficiaire'); clearF(['be-date', 'be-valeur', 'be-desc']); renderBeneficiaires(); updateDashboard(); saveData();
   setTimeout(() => voirFiche(newId), 200);
+};
+
+window.editBene = function (id) {
+  const b = state.beneficiaires.find(x => x.id === id); if (!b) return;
+  document.getElementById('be-edit-id').value = id;
+  document.getElementById('be-adherent').value = b.adherentId || '';
+  document.getElementById('be-date').value = b.date || '';
+  document.getElementById('be-type').value = b.type || 'Allocation';
+  document.getElementById('be-valeur').value = b.valeur || '';
+  document.getElementById('be-desc').value = b.desc || '';
+  document.getElementById('be-statut').value = b.statut || 'En attente';
+  document.getElementById('modal-beneficiaire').querySelector('.modal-title').textContent = '✏️ Modifier Bénéficiaire';
+  openModal('modal-beneficiaire');
 };
 
 // ── FILE BÉNÉFICIAIRES ──
@@ -246,7 +277,7 @@ window.marquerAttribue = async function (id) {
 
 window.delBene = async function (id) {
   const b = state.beneficiaires.find(x => x.id === id);
-  if (b && b.locked) { alert("🔒 Fiche clôturée — suppression impossible."); return; }
+  if (b && b.locked && currentUser?.role !== 'admin') { alert("🔒 Fiche clôturée — suppression impossible."); return; }
   if (!confirm("Supprimer ?")) return;
   try { await deleteDoc(doc(db, 'beneficiaires', id)); } catch (e) { console.error('delBene', e); return alert("Erreur lors de la suppression."); }
   const i = state.beneficiaires.findIndex(x => x.id === id); if (i > -1) state.beneficiaires.splice(i, 1);
@@ -320,9 +351,10 @@ function renderBeneficiaires() {
       <td>${locked ? `<span class="badge badge-locked">🔒 Clôturée<br><small style="font-weight:400">${b.lockedBy || ''}</small></span>` : '<span class="badge badge-gray">Ouverte</span>'}</td>
       <td style="display:flex;gap:3px;flex-wrap:wrap">
         <button class="btn btn-sm btn-success" onclick="voirFiche('${b.id}')">📄</button>
-        ${!locked ? `${b.statut === 'En attente' ? `<button class="btn btn-sm btn-primary" onclick="marquerAttribue('${b.id}')" title="Définir comme bénéficiaire actif">▶ Activer</button>` : ''}
+        ${!locked ? `<button class="btn btn-sm btn-outline" onclick="editBene('${b.id}')" title="Modifier">✏️</button>
+        ${b.statut === 'En attente' ? `<button class="btn btn-sm btn-primary" onclick="marquerAttribue('${b.id}')" title="Définir comme bénéficiaire actif">▶ Activer</button>` : ''}
         <button class="btn btn-sm btn-warning" onclick="cloturerFiche('${b.id}')" title="Clôturer et passer au suivant">🔒 Clôturer</button>
-        <button class="btn btn-sm btn-danger" onclick="delBene('${b.id}')">🗑️</button>` : ''}
+        <button class="btn btn-sm btn-danger" onclick="delBene('${b.id}')">🗑️</button>` : (currentUser?.role === 'admin' ? `<button class="btn btn-sm btn-outline" onclick="editBene('${b.id}')" title="Modifier">✏️</button><button class="btn btn-sm btn-danger" onclick="delBene('${b.id}')" title="Supprimer">🗑️</button>` : '')}
       </td></tr>`;
   }).join('')}</tbody></table>`;
   initDragDrop();
