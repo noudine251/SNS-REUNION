@@ -219,8 +219,8 @@ window.saveBeneficiaire = async function () {
 
 window.editBene = function (id) {
   const b = state.beneficiaires.find(x => x.id === id); if (!b) return;
-  if (b.locked && currentUser?.role !== 'admin') {
-    const pwd = prompt("🔒 Fiche clôturée — entrez le mot de passe pour modifier :");
+  if (b.locked) {
+    const pwd = prompt("entrez le mot de passe pour modifier cette fiche :");
     if (pwd === null) return;
     if (pwd !== '0000') { alert("❌ Mot de passe incorrect."); return; }
   }
@@ -283,7 +283,11 @@ window.marquerAttribue = async function (id) {
 
 window.delBene = async function (id) {
   const b = state.beneficiaires.find(x => x.id === id);
-  if (b && b.locked && currentUser?.role !== 'admin') { alert("🔒 Fiche clôturée — suppression impossible."); return; }
+  if (b && b.locked) {
+    const pwd = prompt("entrez le mot de passe pour supprimer cette fiche :");
+    if (pwd === null) return;
+    if (pwd !== '0000') { alert("❌ Mot de passe incorrect."); return; }
+  }
   if (!confirm("Supprimer ?")) return;
   try { await deleteDoc(doc(db, 'beneficiaires', id)); } catch (e) { console.error('delBene', e); return alert("Erreur lors de la suppression."); }
   const i = state.beneficiaires.findIndex(x => x.id === id); if (i > -1) state.beneficiaires.splice(i, 1);
@@ -319,6 +323,17 @@ function initDragDrop() {
   });
 }
 
+window.moveBene = async function (id, dir) {
+  const sorted = [...state.beneficiaires].sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
+  const idx = sorted.findIndex(b => b.id === id);
+  const swapIdx = idx + dir;
+  if (swapIdx < 0 || swapIdx >= sorted.length) return;
+  const tmp = sorted[idx].ordre; sorted[idx].ordre = sorted[swapIdx].ordre; sorted[swapIdx].ordre = tmp;
+  state.beneficiaires = sorted;
+  try { const batch = writeBatch(db); sorted.forEach(x => batch.set(doc(db, 'beneficiaires', x.id), x)); await batch.commit(); } catch (e) { console.error('moveBene', e); }
+  renderBeneficiaires(); saveData();
+};
+
 // ── RENDERS ──
 
 function renderCaution() {
@@ -347,8 +362,9 @@ function renderBeneficiaires() {
   const sorted = [...state.beneficiaires].sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
   el.innerHTML = `<table><thead><tr><th>↕</th><th>Rang</th><th>Adhérent</th><th>Date</th><th>Type</th><th>Valeur</th><th>Statut</th><th>Sécurité</th><th>Actions</th></tr></thead><tbody id="bene-tbody">${sorted.map((b, i) => {
     const locked = b.locked;
+    const isFirst = i === 0, isLast = i === sorted.length - 1;
     return `<tr draggable="${!locked}" data-id="${b.id}" style="${locked ? 'background:#fef9f9' : ''}">
-      <td>${locked ? '🔒' : '<span class="drag-handle">⠿</span>'}</td>
+      <td>${locked ? '🔒' : `<div style="display:flex;flex-direction:column;gap:1px"><button class="btn btn-sm btn-outline" style="padding:1px 5px;font-size:.7rem" onclick="moveBene('${b.id}',-1)" ${isFirst ? 'disabled' : ''} title="Monter">▲</button><button class="btn btn-sm btn-outline" style="padding:1px 5px;font-size:.7rem" onclick="moveBene('${b.id}',1)" ${isLast ? 'disabled' : ''} title="Descendre">▼</button></div>`}</td>
       <td>${getRankBadge(b.ordre || i + 1)}</td>
       <td><strong>${b.adherentNom}</strong></td>
       <td>${b.date || '—'}</td><td>${b.type}</td>
