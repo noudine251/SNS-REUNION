@@ -31,7 +31,7 @@ window.openCotisationReunion = function () {
 window.chargerLigneCotisation = function () {
   const rId = document.getElementById("cotis-modal-reunion").value;
   const el = document.getElementById("cotis-modal-lignes"); if (!el) return;
-  if (!rId) { el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div>Sélectionnez une réunion</div>'; return; }
+  if (!rId) { el.innerHTML = '<div class="empty"><div class="empty-icon">●</div>Sélectionnez une réunion</div>'; return; }
   if (!state.adherents.length) { el.innerHTML = '<div class="empty">Aucun adhérent enregistré</div>'; return; }
   const lignes = state.adherents.filter(a => a.statut === "Actif").map(a => {
     const existing = state.cotisations.find(x => x.reunionId === rId && x.adherentId === a.id);
@@ -113,7 +113,7 @@ window.sauvegarderCotisations = async function () {
     return alert("Erreur lors de l'enregistrement.");
   }
   closeModal("modal-cotisation");
-  alert("✅ Cotisations enregistrées !");
+  alert("● Cotisations enregistrées !");
 };
 
 // ── Rendu tableau cotisations ─────────────────────────────────────────────────
@@ -124,7 +124,7 @@ export function renderCotisationsReunion() {
   const el = document.getElementById("table-cotisations"); if (!el) return;
   const resume = document.getElementById("cotis-resume");
   if (!rId) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div>Sélectionnez une réunion pour voir les cotisations</div>';
+    el.innerHTML = '<div class="empty"><div class="empty-icon">●</div>Sélectionnez une réunion pour voir les cotisations</div>';
     if (resume) resume.style.display = "none";
     return;
   }
@@ -140,7 +140,7 @@ export function renderCotisationsReunion() {
   setEl("cotis-total-savon", totalSavon + " pcs");
   setEl("cotis-non-payes", nonPayes);
   if (!lignes.length) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div>Aucune cotisation saisie pour cette réunion<br><button class="btn btn-primary" style="margin-top:12px" onclick="openCotisationReunion()">+ Saisir maintenant</button></div>';
+    el.innerHTML = '<div class="empty"><div class="empty-icon">●</div>Aucune cotisation saisie pour cette réunion<br><button class="btn btn-primary" style="margin-top:12px" onclick="openCotisationReunion()">+ Saisir maintenant</button></div>';
     return;
   }
   const statusBadge = { "Payé": "badge-success", "Partiel": "badge-warning", "En attente": "badge-info", "Absent": "badge-danger" };
@@ -159,7 +159,7 @@ export function renderCotisationsReunion() {
           <td>${(l.argent?.cotisation || 0).toLocaleString()} F</td>
           <td>${(l.argent?.ration || 0).toLocaleString()} F</td>
           <td class="${(l.argent?.penalite || 0) > 0 ? "amount-neg" : ""}">${(l.argent?.penalite || 0).toLocaleString()} F</td>
-          ${params.articles.map(art => { const n = l.nature?.find(n => n.nom === art.nom); return `<td style="text-align:center">${n && n.fait ? '<span style="color:var(--success)">✅ ' + n.qte + '</span>' : '<span style="color:var(--danger)">❌</span>'}</td>`; }).join("")}
+          ${params.articles.map(art => { const n = l.nature?.find(n => n.nom === art.nom); return `<td style="text-align:center">${n && n.fait ? '<span style="color:var(--success)">' + n.qte + '</span>' : '<span style="color:var(--danger)">—</span>'}</td>`; }).join("")}
           <td style="font-weight:700">${(l.argent?.total || 0).toLocaleString()} F</td>
           <td><span class="badge ${statusBadge[l.statut] || "badge-gray"}">${l.statut}</span></td>
         </tr>`).join("")}
@@ -188,13 +188,13 @@ window.imprimerFeuillePresence = function () {
   const colsNature = params.articles.map(a => `<th style="min-width:80px">${a.nom}<br><small>${a.qteDefaut} ${a.unite}</small></th>`).join("");
   const rows = adherents.map((a, i) => {
     const l = state.cotisations.find(x => x.reunionId === rId && x.adherentId === a.id);
-    const statusBadge = l ? ({ Payé: "✅", Partiel: "⚠️", "En attente": "⏳", Absent: "❌" }[l.statut] || "") : "";
+    const statusBadge = "";
     return `<tr>
       <td style="text-align:center">${i + 1}</td>
       <td><strong>${a.prenom} ${a.nom}</strong></td>
       <td style="text-align:center">${l ? (l.argent?.cotisation || 0).toLocaleString() + " F" : params.cotisation.toLocaleString() + " F"}</td>
       <td style="text-align:center">${l ? (l.argent?.ration || 0).toLocaleString() + " F" : params.ration.toLocaleString() + " F"}</td>
-      ${params.articles.map(art => { const n = l?.nature?.find(n => n.nom === art.nom); return `<td style="text-align:center">${l ? (n && n.fait ? "✅ " + n.qte : "❌") : "□"}</td>`; }).join("")}
+      ${params.articles.map(art => { const n = l?.nature?.find(n => n.nom === art.nom); return `<td style="text-align:center">${l ? (n && n.fait ? n.qte : "—") : "□"}</td>`; }).join("")}
       <td style="text-align:center">${statusBadge} ${l ? l.statut : ""}</td>
       <td style="min-width:80px"></td>
     </tr>`;

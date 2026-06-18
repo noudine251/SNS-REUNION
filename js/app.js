@@ -139,10 +139,10 @@ window.renderMemberView = function () {
   const current = state.beneficiaires.find(b => b.statut === 'Attribué');
   const next = queue[0];
   document.getElementById('member-cards-grid').innerHTML = `
-    <div class="member-card"><div class="member-card-icon">🏦</div><div class="member-card-label">Fonds disponibles</div><div class="member-card-value">${solde.toLocaleString()} F</div><div class="member-card-sub">Banque scolaire</div></div>
-    <div class="member-card ${current ? 'highlight' : ''}"><div class="member-card-icon">🎁</div><div class="member-card-label">Bénéficiaire du jour</div><div class="member-card-value">${current ? current.adherentNom : '— Aucun —'}</div><div class="member-card-sub">${current ? current.type + ' — ' + (current.valeur ? Number(current.valeur).toLocaleString() + ' F' : '') : 'Pas de bénéficiaire actif'}</div></div>
-    <div class="member-card"><div class="member-card-icon">⏳</div><div class="member-card-label">Prochain en attente</div><div class="member-card-value">${next ? next.adherentNom : '— Aucun —'}</div><div class="member-card-sub">${next ? 'Rang #' + (next.ordre || 1) + ' — ' + next.type : 'File vide'}</div></div>
-    <div class="member-card"><div class="member-card-icon">👥</div><div class="member-card-label">Total adhérents</div><div class="member-card-value">${state.adherents.length}</div><div class="member-card-sub">Membres actifs</div></div>`;
+    <div class="member-card"><div class="member-card-icon">●</div><div class="member-card-label">Fonds disponibles</div><div class="member-card-value">${solde.toLocaleString()} F</div><div class="member-card-sub">Banque scolaire</div></div>
+    <div class="member-card ${current ? 'highlight' : ''}"><div class="member-card-icon">●</div><div class="member-card-label">Bénéficiaire du jour</div><div class="member-card-value">${current ? current.adherentNom : '— Aucun —'}</div><div class="member-card-sub">${current ? current.type + ' — ' + (current.valeur ? Number(current.valeur).toLocaleString() + ' F' : '') : 'Pas de bénéficiaire actif'}</div></div>
+    <div class="member-card"><div class="member-card-icon">●</div><div class="member-card-label">Prochain en attente</div><div class="member-card-value">${next ? next.adherentNom : '— Aucun —'}</div><div class="member-card-sub">${next ? 'Rang #' + (next.ordre || 1) + ' — ' + next.type : 'File vide'}</div></div>
+    <div class="member-card"><div class="member-card-icon">●</div><div class="member-card-label">Total adhérents</div><div class="member-card-value">${state.adherents.length}</div><div class="member-card-sub">Membres actifs</div></div>`;
   const ql = document.getElementById('member-queue-list');
   if (!queue.length) { ql.innerHTML = '<div style="color:rgba(255,255,255,.6);font-size:.85rem;padding:8px">Aucun bénéficiaire en attente.</div>'; return; }
   ql.innerHTML = queue.map((b, i) => `<div class="bene-item"><span class="bene-item-rank">${getRankBadge(i + 1)}</span><div class="bene-item-info"><strong>${b.adherentNom}</strong><br><span style="font-size:.76rem;color:var(--muted)">${b.type}${b.valeur ? ' — ' + Number(b.valeur).toLocaleString() + ' F' : ''}</span></div><span class="badge badge-info">${b.statut}</span></div>`).join('');
@@ -195,7 +195,7 @@ window.saveBeneficiaire = async function () {
   const editId = document.getElementById('be-edit-id').value;
   if (editId) {
     const b = state.beneficiaires.find(x => x.id === editId); if (!b) return;
-    if (b.locked && currentUser?.role !== 'admin') { alert("❌ Modification non autorisée."); return; }
+    if (b.locked && currentUser?.role !== 'admin') { alert("● Modification non autorisée."); return; }
     b.adherentId = aId; b.adherentNom = aNom(getA(aId));
     b.date = document.getElementById('be-date').value;
     b.type = document.getElementById('be-type').value;
@@ -204,7 +204,7 @@ window.saveBeneficiaire = async function () {
     b.statut = document.getElementById('be-statut').value;
     try { await setDoc(doc(db, 'beneficiaires', b.id), b); } catch (e) { console.error('editBeneficiaire', e); return alert("Erreur lors de la sauvegarde."); }
     document.getElementById('be-edit-id').value = '';
-    document.getElementById('modal-beneficiaire').querySelector('.modal-title').textContent = '🎁 Bénéficiaire';
+    document.getElementById('modal-beneficiaire').querySelector('.modal-title').textContent = '● Bénéficiaire';
     closeModal('modal-beneficiaire'); clearF(['be-date', 'be-valeur', 'be-desc']);
     return;
   }
@@ -222,7 +222,7 @@ window.editBene = function (id) {
   if (b.locked) {
     const pwd = prompt("entrez le mot de passe pour modifier cette fiche :");
     if (pwd === null) return;
-    if (pwd !== '0000') { alert("❌ Mot de passe incorrect."); return; }
+    if (pwd !== '0000') { alert("● Mot de passe incorrect."); return; }
   }
   document.getElementById('be-edit-id').value = id;
   document.getElementById('be-adherent').value = b.adherentId || '';
@@ -231,7 +231,7 @@ window.editBene = function (id) {
   document.getElementById('be-valeur').value = b.valeur || '';
   document.getElementById('be-desc').value = b.desc || '';
   document.getElementById('be-statut').value = b.statut || 'En attente';
-  document.getElementById('modal-beneficiaire').querySelector('.modal-title').textContent = '✏️ Modifier Bénéficiaire';
+  document.getElementById('modal-beneficiaire').querySelector('.modal-title').textContent = '● Modifier Bénéficiaire';
   openModal('modal-beneficiaire');
 };
 
@@ -247,7 +247,7 @@ function avancerFile() {
 
 window.cloturerFiche = async function (id) {
   const b = state.beneficiaires.find(x => x.id === id); if (!b) return;
-  if (!confirm("⚠️ Clôturer cette fiche ? Action irréversible.")) return;
+  if (!confirm("● Clôturer cette fiche ? Action irréversible.")) return;
   b.statut = 'Clôturé'; b.locked = true;
   b.lockedAt = new Date().toISOString(); b.lockedBy = currentUser.nom;
   const sorted = [...state.beneficiaires].filter(x => !x.locked).sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
@@ -260,9 +260,9 @@ window.cloturerFiche = async function (id) {
     await batch.commit();
   } catch (e) { console.error('cloturerFiche', e); }
   if (prochain) {
-    setTimeout(() => alert("✅ Clôturé.\n\n🎁 Prochain bénéficiaire : " + prochain.adherentNom + " (rang #" + prochain.ordre + ")"), 100);
+    setTimeout(() => alert("● Clôturé.\n\n● Prochain bénéficiaire : " + prochain.adherentNom + " (rang #" + prochain.ordre + ")"), 100);
   } else {
-    setTimeout(() => alert("✅ Fiche clôturée.\n\nAucun autre bénéficiaire en attente dans la file."), 100);
+    setTimeout(() => alert("● Fiche clôturée.\n\nAucun autre bénéficiaire en attente dans la file."), 100);
   }
   renderBeneficiaires(); window.renderMemberView(); updateDashboard(); saveData();
 };
@@ -286,7 +286,7 @@ window.delBene = async function (id) {
   if (b && b.locked) {
     const pwd = prompt("entrez le mot de passe pour supprimer cette fiche :");
     if (pwd === null) return;
-    if (pwd !== '0000') { alert("❌ Mot de passe incorrect."); return; }
+    if (pwd !== '0000') { alert("● Mot de passe incorrect."); return; }
   }
   if (!confirm("Supprimer ?")) return;
   try { await deleteDoc(doc(db, 'beneficiaires', id)); } catch (e) { console.error('delBene', e); return alert("Erreur lors de la suppression."); }
@@ -314,7 +314,7 @@ function initDragDrop() {
       e.preventDefault(); if (!dragSrc || dragSrc === row) return;
       const si = state.beneficiaires.findIndex(b => b.id === dragSrc.dataset.id), ti = state.beneficiaires.findIndex(b => b.id === row.dataset.id);
       const src = state.beneficiaires[si];
-      if (src?.locked) { alert('🔒 Impossible de déplacer une fiche clôturée.'); return; }
+      if (src?.locked) { alert('● Impossible de déplacer une fiche clôturée.'); return; }
       state.beneficiaires.splice(si, 1); state.beneficiaires.splice(ti, 0, src);
       reorderBene();
       try { const batch = writeBatch(db); state.beneficiaires.forEach(x => batch.set(doc(db, 'beneficiaires', x.id), x)); await batch.commit(); } catch (e) { console.error('dragdrop reorder', e); }
@@ -338,45 +338,45 @@ window.moveBene = async function (id, dir) {
 
 function renderCaution() {
   const el = document.getElementById('table-caution'); if (!el) return;
-  if (!state.caution.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🔒</div>Aucune caution</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>#</th><th>Adhérent</th><th>Date</th><th>Montant</th><th>Objet</th><th>Échéance</th><th>Statut</th><th></th></tr></thead><tbody>${state.caution.map((c, i) => `<tr><td>${i + 1}</td><td>${c.adherentNom}</td><td>${c.date || '—'}</td><td>${c.montant ? Number(c.montant).toLocaleString() + ' F' : '—'}</td><td>${c.motif || '—'}</td><td>${c.echeance || '—'}</td><td>${bdg(c.statut)}</td><td><button class="btn btn-sm btn-danger" onclick="delCaution('${c.id}')">🗑️</button></td></tr>`).join('')}</tbody></table>`;
+  if (!state.caution.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">●</div>Aucune caution</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>#</th><th>Adhérent</th><th>Date</th><th>Montant</th><th>Objet</th><th>Échéance</th><th>Statut</th><th></th></tr></thead><tbody>${state.caution.map((c, i) => `<tr><td>${i + 1}</td><td>${c.adherentNom}</td><td>${c.date || '—'}</td><td>${c.montant ? Number(c.montant).toLocaleString() + ' F' : '—'}</td><td>${c.motif || '—'}</td><td>${c.echeance || '—'}</td><td>${bdg(c.statut)}</td><td><button class="btn btn-sm btn-danger" onclick="delCaution('${c.id}')">●</button></td></tr>`).join('')}</tbody></table>`;
 }
 
 function renderAide() {
   const el = document.getElementById('table-aide'); if (!el) return;
-  if (!state.aide.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🤝</div>Aucune aide</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>#</th><th>Adhérent</th><th>Date</th><th>Type</th><th>Montant</th><th>Description</th><th>Statut</th><th></th></tr></thead><tbody>${state.aide.map((a, i) => `<tr><td>${i + 1}</td><td>${a.adherentNom}</td><td>${a.date || '—'}</td><td>${a.type}</td><td>${a.montant ? Number(a.montant).toLocaleString() + ' F' : '—'}</td><td>${a.desc || '—'}</td><td>${bdg(a.statut)}</td><td><button class="btn btn-sm btn-danger" onclick="delAide('${a.id}')">🗑️</button></td></tr>`).join('')}</tbody></table>`;
+  if (!state.aide.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">●</div>Aucune aide</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>#</th><th>Adhérent</th><th>Date</th><th>Type</th><th>Montant</th><th>Description</th><th>Statut</th><th></th></tr></thead><tbody>${state.aide.map((a, i) => `<tr><td>${i + 1}</td><td>${a.adherentNom}</td><td>${a.date || '—'}</td><td>${a.type}</td><td>${a.montant ? Number(a.montant).toLocaleString() + ' F' : '—'}</td><td>${a.desc || '—'}</td><td>${bdg(a.statut)}</td><td><button class="btn btn-sm btn-danger" onclick="delAide('${a.id}')">●</button></td></tr>`).join('')}</tbody></table>`;
 }
 
 function renderRetard() {
   const el = document.getElementById('table-retard'); if (!el) return;
-  if (!state.retard.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">⏱️</div>Aucun retard</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>#</th><th>Adhérent</th><th>Réunion</th><th>Arrivée</th><th>Durée(min)</th><th>Amende</th><th>Justifié</th><th></th></tr></thead><tbody>${state.retard.map((r, i) => `<tr><td>${i + 1}</td><td>${r.adherentNom}</td><td>${r.reunionTitre || '—'}</td><td>${r.heure || '—'}</td><td>${r.duree || '—'}</td><td>${r.amende ? Number(r.amende).toLocaleString() + ' F' : '—'}</td><td>${bdg(r.justifie)}</td><td><button class="btn btn-sm btn-danger" onclick="delRetard('${r.id}')">🗑️</button></td></tr>`).join('')}</tbody></table>`;
+  if (!state.retard.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">●</div>Aucun retard</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>#</th><th>Adhérent</th><th>Réunion</th><th>Arrivée</th><th>Durée(min)</th><th>Amende</th><th>Justifié</th><th></th></tr></thead><tbody>${state.retard.map((r, i) => `<tr><td>${i + 1}</td><td>${r.adherentNom}</td><td>${r.reunionTitre || '—'}</td><td>${r.heure || '—'}</td><td>${r.duree || '—'}</td><td>${r.amende ? Number(r.amende).toLocaleString() + ' F' : '—'}</td><td>${bdg(r.justifie)}</td><td><button class="btn btn-sm btn-danger" onclick="delRetard('${r.id}')">●</button></td></tr>`).join('')}</tbody></table>`;
 }
 
 function renderBeneficiaires() {
   const el = document.getElementById('table-beneficiaires'); if (!el) return;
   const hasLocked = state.beneficiaires.some(b => b.locked);
   const lb = document.getElementById('locked-banner'); if (lb) lb.style.display = hasLocked ? 'flex' : 'none';
-  if (!state.beneficiaires.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🎁</div>Aucun bénéficiaire</div>'; return; }
+  if (!state.beneficiaires.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">●</div>Aucun bénéficiaire</div>'; return; }
   const sorted = [...state.beneficiaires].sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
   el.innerHTML = `<table><thead><tr><th>↕</th><th>Rang</th><th>Adhérent</th><th>Date</th><th>Type</th><th>Valeur</th><th>Statut</th><th>Sécurité</th><th>Actions</th></tr></thead><tbody id="bene-tbody">${sorted.map((b, i) => {
     const locked = b.locked;
     const isFirst = i === 0, isLast = i === sorted.length - 1;
     return `<tr draggable="${!locked}" data-id="${b.id}" style="${locked ? 'background:#fef9f9' : ''}">
-      <td>${locked ? '🔒' : `<div style="display:flex;flex-direction:column;gap:1px"><button class="btn btn-sm btn-outline" style="padding:1px 5px;font-size:.7rem" onclick="moveBene('${b.id}',-1)" ${isFirst ? 'disabled' : ''} title="Monter">▲</button><button class="btn btn-sm btn-outline" style="padding:1px 5px;font-size:.7rem" onclick="moveBene('${b.id}',1)" ${isLast ? 'disabled' : ''} title="Descendre">▼</button></div>`}</td>
+      <td>${locked ? '●' : `<div style="display:flex;flex-direction:column;gap:1px"><button class="btn btn-sm btn-outline" style="padding:1px 5px;font-size:.7rem" onclick="moveBene('${b.id}',-1)" ${isFirst ? 'disabled' : ''} title="Monter">▲</button><button class="btn btn-sm btn-outline" style="padding:1px 5px;font-size:.7rem" onclick="moveBene('${b.id}',1)" ${isLast ? 'disabled' : ''} title="Descendre">▼</button></div>`}</td>
       <td>${getRankBadge(b.ordre || i + 1)}</td>
       <td><strong>${b.adherentNom}</strong></td>
       <td>${b.date || '—'}</td><td>${b.type}</td>
       <td style="font-weight:700;color:var(--secondary)">${b.valeur ? Number(b.valeur).toLocaleString() + ' F' : '—'}</td>
       <td>${bdg(b.statut)}</td>
-      <td>${locked ? `<span class="badge badge-locked">🔒 Clôturée<br><small style="font-weight:400">${b.lockedBy || ''}</small></span>` : '<span class="badge badge-gray">Ouverte</span>'}</td>
+      <td>${locked ? `<span class="badge badge-locked">● Clôturée<br><small style="font-weight:400">${b.lockedBy || ''}</small></span>` : '<span class="badge badge-gray">Ouverte</span>'}</td>
       <td style="display:flex;gap:3px;flex-wrap:wrap">
-        <button class="btn btn-sm btn-success" onclick="voirFiche('${b.id}')">📄</button>
-        ${!locked ? `<button class="btn btn-sm btn-outline" onclick="editBene('${b.id}')" title="Modifier">✏️</button>
-        ${b.statut === 'En attente' ? `<button class="btn btn-sm btn-primary" onclick="marquerAttribue('${b.id}')" title="Définir comme bénéficiaire actif">▶ Activer</button>` : ''}
-        <button class="btn btn-sm btn-warning" onclick="cloturerFiche('${b.id}')" title="Clôturer et passer au suivant">🔒 Clôturer</button>
-        <button class="btn btn-sm btn-danger" onclick="delBene('${b.id}')">🗑️</button>` : `<button class="btn btn-sm btn-outline" onclick="editBene('${b.id}')" title="Modifier">✏️</button>${currentUser?.role === 'admin' ? `<button class="btn btn-sm btn-danger" onclick="delBene('${b.id}')" title="Supprimer">🗑️</button>` : ''}`}
+        <button class="btn btn-sm btn-success" onclick="voirFiche('${b.id}')">Voir</button>
+        ${!locked ? `<button class="btn btn-sm btn-outline" onclick="editBene('${b.id}')">Modifier</button>
+        ${b.statut === 'En attente' ? `<button class="btn btn-sm btn-primary" onclick="marquerAttribue('${b.id}')">▶ Activer</button>` : ''}
+        <button class="btn btn-sm btn-warning" onclick="cloturerFiche('${b.id}')">Clôturer</button>
+        <button class="btn btn-sm btn-danger" onclick="delBene('${b.id}')">Supprimer</button>` : `<button class="btn btn-sm btn-outline" onclick="editBene('${b.id}')">Modifier</button>${currentUser?.role === 'admin' ? `<button class="btn btn-sm btn-danger" onclick="delBene('${b.id}')">Supprimer</button>` : ''}`}
       </td></tr>`;
   }).join('')}</tbody></table>`;
   initDragDrop();
@@ -389,8 +389,8 @@ export function updateDashboard() {
   document.getElementById('stat-solde').textContent = solde.toLocaleString() + ' F';
   document.getElementById('stat-beneficiaires').textContent = state.beneficiaires.length;
   const dash = document.getElementById('dash-reunions'); if (!dash) return;
-  if (!state.reunions.length) { dash.innerHTML = '<div class="empty"><div class="empty-icon">📅</div>Aucune réunion</div>'; return; }
-  dash.innerHTML = [...state.reunions].reverse().slice(0, 3).map(r => `<div class="meeting-item" style="cursor:default"><div><strong>${r.titre}</strong><div style="font-size:.76rem;color:var(--muted);margin-top:2px">📅 ${r.date || '—'} 📍 ${r.lieu || '—'}</div></div>${bdg(r.statut)}</div>`).join('');
+  if (!state.reunions.length) { dash.innerHTML = '<div class="empty"><div class="empty-icon">●</div>Aucune réunion</div>'; return; }
+  dash.innerHTML = [...state.reunions].reverse().slice(0, 3).map(r => `<div class="meeting-item" style="cursor:default"><div><strong>${r.titre}</strong><div style="font-size:.76rem;color:var(--muted);margin-top:2px">● ${r.date || '—'} ● ${r.lieu || '—'}</div></div>${bdg(r.statut)}</div>`).join('');
 }
 
 // ── FICHE ──
@@ -418,7 +418,7 @@ window.voirFiche = function (id) {
   const autres = state.beneficiaires.filter(x => x.adherentId === b.adherentId);
   const sanctions_l = state.sanctions.filter(s => s.adherentId === b.adherentId);
   const aides_l = state.aide.filter(x => x.adherentId === b.adherentId);
-  const lockedInfo = b.locked ? `<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:.78rem;color:#dc2626">🔒 <strong>Fiche clôturée — Document officiel non modifiable</strong></div>` : '';
+  const lockedInfo = b.locked ? `<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:.78rem;color:#dc2626">● <strong>Fiche clôturée — Document officiel non modifiable</strong></div>` : '';
   document.getElementById('fiche-content').innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px">
       <div><div class="fiche-org">${orgNom}</div><div class="fiche-subtitle">Gestion des Réunions & Prestations</div></div>
@@ -427,14 +427,14 @@ window.voirFiche = function (id) {
     <div class="fiche-title-box">FICHE DE BÉNÉFICIAIRE</div>
     ${lockedInfo}
     <div style="text-align:center;margin-bottom:14px"><span class="badge ${b.statut === 'Attribué' ? 'badge-success' : b.statut === 'Clôturé' ? 'badge-gray' : 'badge-warning'}">${b.statut}</span> <span style="font-size:.75rem;color:var(--muted)">Émise le ${dateEm} à ${heureEm}</span></div>
-    <div class="fiche-section"><div class="fiche-section-title">👤 Informations du Bénéficiaire</div>
+    <div class="fiche-section"><div class="fiche-section-title">● Informations du Bénéficiaire</div>
       <div class="fiche-row"><span class="fiche-label">Nom & Prénom :</span><span class="fiche-value"><strong>${a.prenom || ''} ${a.nom || b.adherentNom}</strong></span></div>
       <div class="fiche-row"><span class="fiche-label">Téléphone :</span><span class="fiche-value">${a.tel || '—'}</span></div>
       <div class="fiche-row"><span class="fiche-label">Email :</span><span class="fiche-value">${a.email || '—'}</span></div>
       <div class="fiche-row"><span class="fiche-label">Profession :</span><span class="fiche-value">${a.profession || '—'}</span></div>
       <div class="fiche-row"><span class="fiche-label">Date d'adhésion :</span><span class="fiche-value">${a.date || '—'}</span></div>
     </div>
-    <div class="fiche-section"><div class="fiche-section-title">🎁 Détail de la Prestation</div>
+    <div class="fiche-section"><div class="fiche-section-title">● Détail de la Prestation</div>
       <div class="fiche-row"><span class="fiche-label">Référence :</span><span class="fiche-value"><strong>${ref}</strong></span></div>
       <div class="fiche-row"><span class="fiche-label">Date :</span><span class="fiche-value">${b.date || '—'}</span></div>
       <div class="fiche-row"><span class="fiche-label">Type :</span><span class="fiche-value"><strong>${b.type}</strong></span></div>
@@ -445,13 +445,13 @@ window.voirFiche = function (id) {
       <div class="fiche-montant-value">${b.valeur ? Number(b.valeur).toLocaleString() + ' F CFA' : 'Non monétaire'}</div>
       ${b.valeur ? `<div class="fiche-montant-lettres">(${nombreEnLettres(Number(b.valeur))})</div>` : ''}
     </div>
-    <div class="fiche-section"><div class="fiche-section-title">📋 Traçabilité</div>
+    <div class="fiche-section"><div class="fiche-section-title">● Traçabilité</div>
       <div class="tracabilite-log">
         <div style="font-size:.75rem;font-weight:700;color:var(--primary);margin-bottom:6px">Prestations (${autres.length})</div>
-        ${autres.length ? autres.map(x => `<div class="tracabilite-item"><div class="tracabilite-dot" style="background:${x.id === b.id ? 'var(--accent)' : 'var(--secondary)'}"></div><div class="tracabilite-time">${x.date || '—'}</div><div style="flex:1"><strong>${x.type}</strong>${x.valeur ? ' — ' + Number(x.valeur).toLocaleString() + ' F' : ''}${x.desc ? ' — ' + x.desc : ''} <span class="badge ${x.id === b.id ? 'badge-warning' : 'badge-info'}" style="font-size:.68rem">${x.id === b.id ? '← Actuelle' : 'passée'}</span>${x.locked ? ' 🔒' : ''}</div></div>`).join('') : '<div style="color:var(--muted);font-size:.78rem;padding:5px">Aucune autre prestation</div>'}
+        ${autres.length ? autres.map(x => `<div class="tracabilite-item"><div class="tracabilite-dot" style="background:${x.id === b.id ? 'var(--accent)' : 'var(--secondary)'}"></div><div class="tracabilite-time">${x.date || '—'}</div><div style="flex:1"><strong>${x.type}</strong>${x.valeur ? ' — ' + Number(x.valeur).toLocaleString() + ' F' : ''}${x.desc ? ' — ' + x.desc : ''} <span class="badge ${x.id === b.id ? 'badge-warning' : 'badge-info'}" style="font-size:.68rem">${x.id === b.id ? '← Actuelle' : 'passée'}</span>${x.locked ? ' ●' : ''}</div></div>`).join('') : '<div style="color:var(--muted);font-size:.78rem;padding:5px">Aucune autre prestation</div>'}
       </div>
-      ${sanctions_l.length ? `<div class="tracabilite-log" style="margin-top:7px"><div style="font-size:.75rem;font-weight:700;color:#991b1b;margin-bottom:6px">⚠️ Sanctions (${sanctions_l.length})</div>${sanctions_l.map(s => `<div class="tracabilite-item"><div class="tracabilite-dot" style="background:var(--danger)"></div><div class="tracabilite-time">${s.date || '—'}</div><div style="flex:1">${s.type}${s.montant ? ' — ' + Number(s.montant).toLocaleString() + ' F' : ''} — ${s.motif || '—'} [${s.statut}]</div></div>`).join('')}</div>` : ''}
-      ${aides_l.length ? `<div class="tracabilite-log" style="margin-top:7px"><div style="font-size:.75rem;font-weight:700;color:#065f46;margin-bottom:6px">🤝 Aides (${aides_l.length})</div>${aides_l.map(x => `<div class="tracabilite-item"><div class="tracabilite-dot" style="background:var(--success)"></div><div class="tracabilite-time">${x.date || '—'}</div><div style="flex:1">${x.type}${x.montant ? ' — ' + Number(x.montant).toLocaleString() + ' F' : ''}${x.desc ? ' — ' + x.desc : ''} [${x.statut}]</div></div>`).join('')}</div>` : ''}
+      ${sanctions_l.length ? `<div class="tracabilite-log" style="margin-top:7px"><div style="font-size:.75rem;font-weight:700;color:#991b1b;margin-bottom:6px">● Sanctions (${sanctions_l.length})</div>${sanctions_l.map(s => `<div class="tracabilite-item"><div class="tracabilite-dot" style="background:var(--danger)"></div><div class="tracabilite-time">${s.date || '—'}</div><div style="flex:1">${s.type}${s.montant ? ' — ' + Number(s.montant).toLocaleString() + ' F' : ''} — ${s.motif || '—'} [${s.statut}]</div></div>`).join('')}</div>` : ''}
+      ${aides_l.length ? `<div class="tracabilite-log" style="margin-top:7px"><div style="font-size:.75rem;font-weight:700;color:#065f46;margin-bottom:6px">● Aides (${aides_l.length})</div>${aides_l.map(x => `<div class="tracabilite-item"><div class="tracabilite-dot" style="background:var(--success)"></div><div class="tracabilite-time">${x.date || '—'}</div><div style="flex:1">${x.type}${x.montant ? ' — ' + Number(x.montant).toLocaleString() + ' F' : ''}${x.desc ? ' — ' + x.desc : ''} [${x.statut}]</div></div>`).join('')}</div>` : ''}
     </div>
     <div class="fiche-signatures">
       <div class="fiche-sig-box"><div class="fiche-sig-line"></div><div class="fiche-sig-label">Le Bénéficiaire</div><div style="font-size:.78rem;margin-top:2px">${a.prenom || ''} ${a.nom || b.adherentNom}</div></div>
@@ -478,7 +478,7 @@ window.genererFileAuto = async function () {
   } catch (e) { console.error('genererFileAuto', e); return alert("Erreur lors de la génération."); }
   state.beneficiaires.push(...nouveaux);
   reorderBene(); renderBeneficiaires(); updateDashboard(); saveData();
-  alert("✅ " + sansB.length + " adhérent(s) ajouté(s) à la file.");
+  alert("● " + sansB.length + " adhérent(s) ajouté(s) à la file.");
 };
 
 // ── PARAMÈTRES ──
@@ -505,7 +505,7 @@ window.sauvegarderParametres = function () {
   params.ration = parseFloat(document.getElementById('p-ration').value) || 6000;
   params.amende = parseFloat(document.getElementById('p-amende').value) || 2000;
   saveData();
-  alert("✅ Paramètres enregistrés !");
+  alert("● Paramètres enregistrés !");
 };
 
 window.ajouterArticle = function () {
@@ -522,7 +522,7 @@ function renderArticles() {
   el.innerHTML = params.articles.map(a => `
     <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#f8fafc;border-radius:8px;margin-bottom:6px">
       <span style="flex:1;font-size:.85rem"><strong>${a.nom}</strong> — ${a.qteDefaut} ${a.unite}</span>
-      <button class="btn btn-sm btn-danger" onclick="supprimerArticle('${a.id}')">🗑️</button>
+      <button class="btn btn-sm btn-danger" onclick="supprimerArticle('${a.id}')">●</button>
     </div>`).join('');
 }
 
