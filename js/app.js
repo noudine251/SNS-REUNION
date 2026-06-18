@@ -195,6 +195,7 @@ window.saveBeneficiaire = async function () {
   const editId = document.getElementById('be-edit-id').value;
   if (editId) {
     const b = state.beneficiaires.find(x => x.id === editId); if (!b) return;
+    if (b.locked && currentUser?.role !== 'admin') { alert("🔒 Fiche clôturée — modification réservée à l'administrateur."); return; }
     b.adherentId = aId; b.adherentNom = aNom(getA(aId));
     b.date = document.getElementById('be-date').value;
     b.type = document.getElementById('be-type').value;
@@ -218,6 +219,7 @@ window.saveBeneficiaire = async function () {
 
 window.editBene = function (id) {
   const b = state.beneficiaires.find(x => x.id === id); if (!b) return;
+  if (b.locked && currentUser?.role !== 'admin') { alert("🔒 Fiche clôturée — modification réservée à l'administrateur."); return; }
   document.getElementById('be-edit-id').value = id;
   document.getElementById('be-adherent').value = b.adherentId || '';
   document.getElementById('be-date').value = b.date || '';
