@@ -195,7 +195,7 @@ window.saveBeneficiaire = async function () {
   const editId = document.getElementById('be-edit-id').value;
   if (editId) {
     const b = state.beneficiaires.find(x => x.id === editId); if (!b) return;
-    if (b.locked && currentUser?.role !== 'admin') { alert("🔒 Fiche clôturée — modification réservée à l'administrateur."); return; }
+    if (b.locked && currentUser?.role !== 'admin') { alert("❌ Modification non autorisée."); return; }
     b.adherentId = aId; b.adherentNom = aNom(getA(aId));
     b.date = document.getElementById('be-date').value;
     b.type = document.getElementById('be-type').value;
@@ -219,7 +219,11 @@ window.saveBeneficiaire = async function () {
 
 window.editBene = function (id) {
   const b = state.beneficiaires.find(x => x.id === id); if (!b) return;
-  if (b.locked && currentUser?.role !== 'admin') { alert("🔒 Fiche clôturée — modification réservée à l'administrateur."); return; }
+  if (b.locked && currentUser?.role !== 'admin') {
+    const pwd = prompt("🔒 Fiche clôturée — entrez le mot de passe pour modifier :");
+    if (pwd === null) return;
+    if (pwd !== '0000') { alert("❌ Mot de passe incorrect."); return; }
+  }
   document.getElementById('be-edit-id').value = id;
   document.getElementById('be-adherent').value = b.adherentId || '';
   document.getElementById('be-date').value = b.date || '';
@@ -356,7 +360,7 @@ function renderBeneficiaires() {
         ${!locked ? `<button class="btn btn-sm btn-outline" onclick="editBene('${b.id}')" title="Modifier">✏️</button>
         ${b.statut === 'En attente' ? `<button class="btn btn-sm btn-primary" onclick="marquerAttribue('${b.id}')" title="Définir comme bénéficiaire actif">▶ Activer</button>` : ''}
         <button class="btn btn-sm btn-warning" onclick="cloturerFiche('${b.id}')" title="Clôturer et passer au suivant">🔒 Clôturer</button>
-        <button class="btn btn-sm btn-danger" onclick="delBene('${b.id}')">🗑️</button>` : (currentUser?.role === 'admin' ? `<button class="btn btn-sm btn-outline" onclick="editBene('${b.id}')" title="Modifier">✏️</button><button class="btn btn-sm btn-danger" onclick="delBene('${b.id}')" title="Supprimer">🗑️</button>` : '')}
+        <button class="btn btn-sm btn-danger" onclick="delBene('${b.id}')">🗑️</button>` : `<button class="btn btn-sm btn-outline" onclick="editBene('${b.id}')" title="Modifier">✏️</button>${currentUser?.role === 'admin' ? `<button class="btn btn-sm btn-danger" onclick="delBene('${b.id}')" title="Supprimer">🗑️</button>` : ''}`}
       </td></tr>`;
   }).join('')}</tbody></table>`;
   initDragDrop();
