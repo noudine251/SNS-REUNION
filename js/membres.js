@@ -19,8 +19,8 @@ export function renderAdherents() {
   const q = (document.getElementById('search-adherent')?.value || '').toLowerCase();
   const list = state.adherents.filter(a => (a.nom + ' ' + a.prenom).toLowerCase().includes(q));
   const el = document.getElementById('table-adherents'); if (!el) return;
-  if (!list.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">👥</div>Aucun adhérent</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>#</th><th>Nom & Prénom</th><th>Téléphone</th><th>Profession</th><th>Cotisation</th><th>Statut</th><th>Actions</th></tr></thead><tbody>${list.map((a, i) => `<tr><td>${i + 1}</td><td><strong>${a.prenom} ${a.nom}</strong><br><small style="color:var(--muted)">${a.email || ''}</small></td><td>${a.tel || '—'}</td><td>${a.profession || '—'}</td><td>${a.cotisation ? Number(a.cotisation).toLocaleString() + ' F' : '—'}</td><td>${bdg(a.statut)}</td><td style="display:flex;gap:4px"><button class="btn btn-sm btn-outline" onclick="editAdherent('${a.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="delAdherent('${a.id}')">🗑️</button></td></tr>`).join('')}</tbody></table>`;
+  if (!list.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">Adhérent</div>Aucun adhérent</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>#</th><th>Nom & Prénom</th><th>Téléphone</th><th>Profession</th><th>Cotisation</th><th>Statut</th><th>Actions</th></tr></thead><tbody>${list.map((a, i) => `<tr><td>${i + 1}</td><td><strong>${a.prenom} ${a.nom}</strong><br><small style="color:var(--muted)">${a.email || ''}</small></td><td>${a.tel || '—'}</td><td>${a.profession || '—'}</td><td>${a.cotisation ? Number(a.cotisation).toLocaleString() + ' F' : '—'}</td><td>${bdg(a.statut)}</td><td style="display:flex;gap:4px"><button class="btn btn-sm btn-outline" onclick="editAdherent('${a.id}')">Modifier</button><button class="btn btn-sm btn-danger" onclick="delAdherent('${a.id}')">Supprimer</button></td></tr>`).join('')}</tbody></table>`;
 }
 
 // ── CRUD adhérents → Firestore "membres" ──────────────────────────────────────
@@ -45,7 +45,7 @@ window.saveAdherent = async function () {
     return alert("Erreur lors de la sauvegarde.");
   }
   document.getElementById('a-id').value = '';
-  document.getElementById('modal-adherent-title').textContent = '👤 Adhérent';
+  document.getElementById('modal-adherent-title').textContent = 'Adhérent';
   closeModal('modal-adherent');
   clearF(['a-nom', 'a-prenom', 'a-tel', 'a-email', 'a-profession', 'a-date', 'a-cotisation']);
 };
@@ -71,7 +71,7 @@ window.editAdherent = function (id) {
   document.getElementById('a-date').value = a.date || '';
   document.getElementById('a-statut').value = a.statut || 'Actif';
   document.getElementById('a-cotisation').value = a.cotisation || '';
-  document.getElementById('modal-adherent-title').textContent = '✏️ Modifier Adhérent';
+  document.getElementById('modal-adherent-title').textContent = 'Modifier Adhérent';
   openModal('modal-adherent');
 };
 
@@ -92,8 +92,8 @@ onSnapshot(
 
 export function renderUsers() {
   const el = document.getElementById('list-users'); if (!el) return;
-  if (!state.users.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🔑</div>Aucun utilisateur</div>'; return; }
-  const colors = { admin: '#fef3c7', bureau: '#dbeafe', membre: '#d1fae5' }, icons = { admin: '👑', bureau: '🏢', membre: '👤' };
+  if (!state.users.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">Utilisateur</div>Aucun utilisateur</div>'; return; }
+  const colors = { admin: '#fef3c7', bureau: '#dbeafe', membre: '#d1fae5' }, icons = { admin: '', bureau: '', membre: '' };
   el.innerHTML = state.users.map(u => `<div class="user-card">
     <div style="display:flex;align-items:center;gap:12px">
       <div class="user-avatar" style="background:${colors[u.role] || '#f1f5f9'}">${icons[u.role] || '?'}</div>
@@ -101,8 +101,8 @@ export function renderUsers() {
       <div style="font-size:.75rem;color:var(--muted);margin-top:1px">Login : <code>${u.login}</code>${u.adherentId ? ' — ' + getAdherentNom(u.adherentId) : ''}</div></div>
     </div>
     <div style="display:flex;gap:6px;align-items:center">${bdg(u.role)} ${bdg(u.statut)}
-      <button class="btn btn-sm btn-outline" onclick="editUser('${u.id}')">✏️</button>
-      ${u.id !== 'u1' ? `<button class="btn btn-sm btn-danger" onclick="delUser('${u.id}')">🗑️</button>` : ''}
+      <button class="btn btn-sm btn-outline" onclick="editUser('${u.id}')">Modifier</button>
+      ${u.id !== 'u1' ? `<button class="btn btn-sm btn-danger" onclick="delUser('${u.id}')">Supprimer</button>` : ''}
     </div></div>`).join('');
 }
 

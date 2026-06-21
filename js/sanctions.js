@@ -9,8 +9,8 @@ import {
 
 export function renderSanctions() {
   const el = document.getElementById('table-sanctions'); if (!el) return;
-  if (!state.sanctions.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div>Aucune sanction</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>#</th><th>Adhérent</th><th>Date</th><th>Type</th><th>Montant</th><th>Motif</th><th>Statut</th><th></th></tr></thead><tbody>${state.sanctions.map((s, i) => `<tr><td>${i + 1}</td><td>${s.adherentNom}</td><td>${s.date || '—'}</td><td>${bdg(s.type)}</td><td>${s.montant ? Number(s.montant).toLocaleString() + ' F' : '—'}</td><td>${s.motif || '—'}</td><td>${bdg(s.statut)}</td><td><button class="btn btn-sm btn-danger" onclick="delSanction('${s.id}')">🗑️</button></td></tr>`).join('')}</tbody></table>`;
+  if (!state.sanctions.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">Sanction</div>Aucune sanction</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>#</th><th>Adhérent</th><th>Date</th><th>Type</th><th>Montant</th><th>Motif</th><th>Statut</th><th></th></tr></thead><tbody>${state.sanctions.map((s, i) => `<tr><td>${i + 1}</td><td>${s.adherentNom}</td><td>${s.date || '—'}</td><td>${bdg(s.type)}</td><td>${s.montant ? Number(s.montant).toLocaleString() + ' F' : '—'}</td><td>${s.motif || '—'}</td><td>${bdg(s.statut)}</td><td><button class="btn btn-sm btn-danger" onclick="delSanction('${s.id}')">Supprimer</button></td></tr>`).join('')}</tbody></table>`;
 }
 
 // ── CRUD sanctions → Firestore "sanctions" ────────────────────────────────────

@@ -31,7 +31,7 @@ window.openCotisationReunion = function () {
 window.chargerLigneCotisation = function () {
   const rId = document.getElementById("cotis-modal-reunion").value;
   const el = document.getElementById("cotis-modal-lignes"); if (!el) return;
-  if (!rId) { el.innerHTML = '<div class="empty"><div class="empty-icon">●</div>Sélectionnez une réunion</div>'; return; }
+  if (!rId) { el.innerHTML = '<div class="empty"><div class="empty-icon"></div>Sélectionnez une réunion</div>'; return; }
   if (!state.adherents.length) { el.innerHTML = '<div class="empty">Aucun adhérent enregistré</div>'; return; }
   const lignes = state.adherents.filter(a => a.statut === "Actif").map(a => {
     const existing = state.cotisations.find(x => x.reunionId === rId && x.adherentId === a.id);
@@ -113,7 +113,7 @@ window.sauvegarderCotisations = async function () {
     return alert("Erreur lors de l'enregistrement.");
   }
   closeModal("modal-cotisation");
-  alert("● Cotisations enregistrées !");
+  alert("Cotisations enregistrées !");
 };
 
 // ── Rendu tableau cotisations ─────────────────────────────────────────────────
@@ -124,7 +124,7 @@ export function renderCotisationsReunion() {
   const el = document.getElementById("table-cotisations"); if (!el) return;
   const resume = document.getElementById("cotis-resume");
   if (!rId) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">●</div>Sélectionnez une réunion pour voir les cotisations</div>';
+    el.innerHTML = '<div class="empty"><div class="empty-icon">Réunion</div>Sélectionnez une réunion pour voir les cotisations</div>';
     if (resume) resume.style.display = "none";
     return;
   }
@@ -140,7 +140,7 @@ export function renderCotisationsReunion() {
   setEl("cotis-total-savon", totalSavon + " pcs");
   setEl("cotis-non-payes", nonPayes);
   if (!lignes.length) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">●</div>Aucune cotisation saisie pour cette réunion<br><button class="btn btn-primary" style="margin-top:12px" onclick="openCotisationReunion()">+ Saisir maintenant</button></div>';
+    el.innerHTML = '<div class="empty"><div class="empty-icon">Cotis.</div>Aucune cotisation saisie pour cette réunion<br><button class="btn btn-primary" style="margin-top:12px" onclick="openCotisationReunion()">+ Saisir maintenant</button></div>';
     return;
   }
   const statusBadge = { "Payé": "badge-success", "Partiel": "badge-warning", "En attente": "badge-info", "Absent": "badge-danger" };

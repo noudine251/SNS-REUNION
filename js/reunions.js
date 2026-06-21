@@ -10,8 +10,8 @@ import {
 
 export function renderReunions() {
   const el = document.getElementById('list-reunions'); if (!el) return;
-  if (!state.reunions.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📅</div>Aucune réunion</div>'; return; }
-  el.innerHTML = state.reunions.map(r => `<div class="meeting-item"><div><strong>${r.titre}</strong><div style="font-size:.76rem;color:var(--muted);margin-top:2px">📅 ${r.date || '—'} ⏰ ${r.heure || '—'} 📍 ${r.lieu || '—'}</div>${r.odj ? `<div style="font-size:.76rem;color:var(--muted);margin-top:1px">📋 ${r.odj.substring(0, 80)}${r.odj.length > 80 ? '…' : ''}</div>` : ''}</div><div style="display:flex;gap:7px;align-items:center">${bdg(r.statut)}<button class="btn btn-sm btn-danger" onclick="delReunion('${r.id}')">🗑️</button></div></div>`).join('');
+  if (!state.reunions.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">Réunion</div>Aucune réunion</div>'; return; }
+  el.innerHTML = state.reunions.map(r => `<div class="meeting-item"><div><strong>${r.titre}</strong><div style="font-size:.76rem;color:var(--muted);margin-top:2px">${r.date || '—'} ${r.heure || '—'} ${r.lieu || '—'}</div>${r.odj ? `<div style="font-size:.76rem;color:var(--muted);margin-top:1px">${r.odj.substring(0, 80)}${r.odj.length > 80 ? '…' : ''}</div>` : ''}</div><div style="display:flex;gap:7px;align-items:center">${bdg(r.statut)}<button class="btn btn-sm btn-danger" onclick="delReunion('${r.id}')">Supprimer</button></div></div>`).join('');
 }
 
 export function populateReunionSelect() {
@@ -87,7 +87,7 @@ window.genererReunionsAuto = async function () {
     console.error('genererReunionsAuto', e);
     return alert("Erreur lors de la génération.");
   }
-  alert("✅ " + nouvelles.length + " réunion(s) générée(s) !");
+  alert("" + nouvelles.length + " réunion(s) générée(s) !");
 };
 
 // ── Sync temps réel : Firestore "reunions" → state.reunions ──────────────────

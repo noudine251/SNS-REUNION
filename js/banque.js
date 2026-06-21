@@ -6,7 +6,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 let activeBanqueRubrique = 'scolaire';
-const rubriquesLabels = { scolaire: "🏦 BANQUE SCOLAIRE", fond: "💰 FOND DE LA RÉUNION", caisse: "🏧 CAISSE D'ATTENTE" };
+const rubriquesLabels = { scolaire: "BANQUE SCOLAIRE", fond: "FOND DE LA RÉUNION", caisse: "CAISSE D'ATTENTE" };
 
 // ── Rendu ─────────────────────────────────────────────────────────────────────
 
@@ -21,8 +21,8 @@ export function renderBanque() {
   let ent = 0, sor = 0; filtered.forEach(t => t.type === 'Entrée' ? ent += t.montant : sor += t.montant);
   ['banque-entrees', 'banque-sorties', 'banque-solde'].forEach((id, i) => { const el = document.getElementById(id); if (el) el.textContent = [ent, sor, ent - sor][i].toLocaleString() + ' F'; });
   const el = document.getElementById('table-banque'); if (!el) return;
-  if (!filtered.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🏦</div>Aucune transaction dans cette rubrique</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>#</th><th>Date</th><th>Type</th><th>Libellé</th><th>Catégorie</th><th>Adhérent</th><th>Montant</th><th></th></tr></thead><tbody>${filtered.map((t, i) => `<tr><td>${i + 1}</td><td>${t.date || '—'}</td><td>${bdg(t.type)}</td><td>${t.libelle || '—'}</td><td>${t.categorie}</td><td>${t.adherentNom || '—'}</td><td class="${t.type === 'Entrée' ? 'amount-pos' : 'amount-neg'}">${t.type === 'Entrée' ? '+' : '-'}${t.montant.toLocaleString()} F</td><td><button class="btn btn-sm btn-danger" onclick="delBanque('${t.id}')">🗑️</button></td></tr>`).join('')}</tbody></table>`;
+  if (!filtered.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">Banque</div>Aucune transaction dans cette rubrique</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>#</th><th>Date</th><th>Type</th><th>Libellé</th><th>Catégorie</th><th>Adhérent</th><th>Montant</th><th></th></tr></thead><tbody>${filtered.map((t, i) => `<tr><td>${i + 1}</td><td>${t.date || '—'}</td><td>${bdg(t.type)}</td><td>${t.libelle || '—'}</td><td>${t.categorie}</td><td>${t.adherentNom || '—'}</td><td class="${t.type === 'Entrée' ? 'amount-pos' : 'amount-neg'}">${t.type === 'Entrée' ? '+' : '-'}${t.montant.toLocaleString()} F</td><td><button class="btn btn-sm btn-danger" onclick="delBanque('${t.id}')">Supprimer</button></td></tr>`).join('')}</tbody></table>`;
 }
 
 // ── CRUD banque → Firestore "banque" ──────────────────────────────────────────

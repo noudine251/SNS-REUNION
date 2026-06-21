@@ -44,7 +44,7 @@ export async function migrerVersFirestore() {
     }
 
     await setDoc(FLAG_REF, { done: true, date: new Date().toISOString(), total });
-    alert(`✅ Migration terminée — ${total} document(s) envoyé(s) vers Firestore.`);
+    alert(`Migration terminée — ${total} document(s) envoyé(s) vers Firestore.`);
   } catch (e) {
     console.error('migrerVersFirestore', e);
   }

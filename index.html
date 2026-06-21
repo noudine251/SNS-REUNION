@@ -13,7 +13,7 @@
 <div id="login-screen" style="display:flex">
   <div class="login-box">
     <div class="login-logo">
-      <span class="icon">●</span>
+      <span class="icon"></span>
       <h1>GestRéunion</h1>
       <p>Plateforme de gestion des réunions</p>
     </div>
@@ -21,7 +21,7 @@
     <div class="login-field"><label>Mot de passe</label><input id="login-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <button class="login-btn" onclick="doLogin()">Se connecter →</button>
     <div id="login-err" class="login-err">Identifiant ou mot de passe incorrect.</div>
-    <div id="firebase-badge" class="firebase-badge" style="display:none">● <span id="firebase-mode-label">Connecté à Firebase</span></div>
+    <div id="firebase-badge" class="firebase-badge" style="display:none"><span id="firebase-mode-label">Connecté à Firebase</span></div>
     <div style="margin-top:12px;padding:9px;background:#f8fafc;border-radius:8px;font-size:.73rem;color:var(--muted);">
       <strong>Comptes de démo :</strong> &nbsp; Bureau : <code>Snstech / 1234</code> &nbsp; Membre : <code>Sinfo / 1234</code>
     </div>
@@ -31,50 +31,41 @@
 <!-- ═══ MEMBER VIEW ═══ -->
 <div id="member-view">
   <div class="member-header">
-    <div><h1>● Espace Adhérent</h1><p id="member-welcome">Bienvenue</p></div>
+    <div><h1>Espace Adhérent</h1><p id="member-welcome">Bienvenue</p></div>
     <button class="btn btn-outline" style="color:white;border-color:rgba(255,255,255,.4)" onclick="doLogout()">Déconnexion</button>
   </div>
   <div class="member-cards" id="member-cards-grid"></div>
   <div class="member-benefice-list">
-    <h3>● File d'attente des bénéficiaires</h3>
+    <h3>File d'attente des bénéficiaires</h3>
     <div id="member-queue-list"></div>
   </div>
 </div>
 
 <!-- ═══ FULL APP ═══ -->
 <div id="app">
-  <nav class="navbar navbar-expand-lg" id="main-navbar" style="background:var(--primary);box-shadow:0 2px 12px rgba(0,0,0,.2)">
-    <div class="container-fluid px-3">
-      <span class="navbar-brand text-white fw-bold">GestRéunion</span>
-      <button class="navbar-toggler border-0 d-flex align-items-center gap-2 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse" aria-expanded="false">
-        <span class="navbar-toggler-icon"></span><span style="font-size:.85rem;font-weight:600">MENU</span>
-      </button>
-      <div class="collapse navbar-collapse" id="navCollapse">
-        <div class="d-flex flex-wrap gap-1 flex-grow-1 py-2 py-lg-0 me-2">
-          <div class="nav-item active" onclick="showPage('dashboard')">Tableau de bord</div>
-          <div class="nav-item" onclick="showPage('reunions')">Réunions</div>
-          <div class="nav-item" onclick="showPage('adherents')">Adhérents</div>
-          <div class="nav-item" onclick="showPage('sanctions')">Sanctions</div>
-          <div class="nav-item" onclick="showPage('banque')">Banque scolaire</div>
-          <div class="nav-item" onclick="showPage('caution')">Caution</div>
-          <div class="nav-item" onclick="showPage('aide')">Aide</div>
-          <div class="nav-item" onclick="showPage('retard')">Retard</div>
-          <div class="nav-item" onclick="showPage('beneficiaires')">Bénéficiaires</div>
-          <div class="nav-item" onclick="showPage('cotisations')">Cotisations</div>
-          <div class="nav-item" onclick="showPage('parametres')">Paramètres</div>
-          <div class="nav-item admin-only" onclick="showPage('utilisateurs')">Utilisateurs</div>
-        </div>
-        <div class="d-flex align-items-center gap-2 pt-2 pt-lg-0">
-          <div class="text-white lh-sm text-end">
-            <div id="sb-username" class="fw-bold" style="font-size:.85rem">—</div>
-            <div id="sb-fullname" style="font-size:.72rem;opacity:.65">—</div>
-            <span class="role-badge" id="sb-role-badge">—</span>
-          </div>
-          <button class="topbar-logout" onclick="doLogout()">Déconnexion</button>
-        </div>
-      </div>
+  <div class="sidebar">
+    <div class="sidebar-brand">GestRéunion</div>
+    <div class="sidebar-user">
+      <div id="sb-username" class="sb-username">—</div>
+      <div id="sb-fullname" class="sb-fullname">—</div>
+      <span class="role-badge" id="sb-role-badge">—</span>
     </div>
-  </nav>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="showPage('dashboard')">Tableau de bord</div>
+      <div class="nav-item" onclick="showPage('reunions')">Réunions</div>
+      <div class="nav-item" onclick="showPage('adherents')">Adhérents</div>
+      <div class="nav-item" onclick="showPage('sanctions')">Sanctions</div>
+      <div class="nav-item" onclick="showPage('banque')">Banque scolaire</div>
+      <div class="nav-item" onclick="showPage('caution')">Caution</div>
+      <div class="nav-item" onclick="showPage('aide')">Aide</div>
+      <div class="nav-item" onclick="showPage('retard')">Retard</div>
+      <div class="nav-item" onclick="showPage('beneficiaires')">Bénéficiaires</div>
+      <div class="nav-item" onclick="showPage('cotisations')">Cotisations</div>
+      <div class="nav-item" onclick="showPage('parametres')">Paramètres</div>
+      <div class="nav-item admin-only" onclick="showPage('utilisateurs')">Utilisateurs</div>
+    </nav>
+    <button class="sidebar-logout" onclick="doLogout()">Déconnexion</button>
+  </div>
 
   <div class="main">
     <div id="page-dashboard" class="page active">
@@ -82,72 +73,72 @@
         <div><h1>Tableau de bord</h1><p>Vue d'ensemble des activités</p></div>
       </div>
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-icon" style="background:#dbeafe">●</div><div><div class="stat-value" id="stat-adherents">0</div><div class="stat-label">Adhérents</div></div></div>
-        <div class="stat-card"><div class="stat-icon" style="background:#fee2e2">●</div><div><div class="stat-value" id="stat-sanctions">0</div><div class="stat-label">Sanctions</div></div></div>
-        <div class="stat-card"><div class="stat-icon" style="background:#d1fae5">●</div><div><div class="stat-value" id="stat-solde">0 F</div><div class="stat-label">Solde banque</div></div></div>
-        <div class="stat-card"><div class="stat-icon" style="background:#fef3c7">●</div><div><div class="stat-value" id="stat-beneficiaires">0</div><div class="stat-label">Bénéficiaires</div></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#dbeafe">Mbr</div><div><div class="stat-value" id="stat-adherents">0</div><div class="stat-label">Adhérents</div></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#fee2e2">Snc</div><div><div class="stat-value" id="stat-sanctions">0</div><div class="stat-label">Sanctions</div></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#d1fae5">Sol</div><div><div class="stat-value" id="stat-solde">0 F</div><div class="stat-label">Solde banque</div></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#fef3c7">Bén</div><div><div class="stat-value" id="stat-beneficiaires">0</div><div class="stat-label">Bénéficiaires</div></div></div>
       </div>
-      <div class="card"><div class="card-title">● Dernières réunions</div><div id="dash-reunions"></div></div>
+      <div class="card"><div class="card-title">Dernières réunions</div><div id="dash-reunions"></div></div>
     </div>
 
     <div id="page-reunions" class="page">
-      <div class="page-header"><div><h1>● Réunions</h1></div><button class="btn btn-primary" onclick="openModal('modal-reunion')">+ Nouvelle</button></div>
+      <div class="page-header"><div><h1>Réunions</h1></div><button class="btn btn-primary" onclick="openModal('modal-reunion')">+ Nouvelle</button></div>
       <div class="card"><div id="list-reunions"></div></div>
     </div>
 
     <div id="page-adherents" class="page">
-      <div class="page-header"><div><h1>● Adhérents</h1></div><button class="btn btn-primary" onclick="openModal('modal-adherent')">+ Ajouter</button></div>
-      <div class="card"><div class="search-bar"><input id="search-adherent" placeholder="● Rechercher..." oninput="renderAdherents()"></div><div id="table-adherents"></div></div>
+      <div class="page-header"><div><h1>Adhérents</h1></div><button class="btn btn-primary" onclick="openModal('modal-adherent')">+ Ajouter</button></div>
+      <div class="card"><div class="search-bar"><input id="search-adherent" placeholder="Rechercher..." oninput="renderAdherents()"></div><div id="table-adherents"></div></div>
     </div>
 
     <div id="page-sanctions" class="page">
-      <div class="page-header"><div><h1>● Sanctions</h1></div><button class="btn btn-warning" onclick="openModal('modal-sanction')">+ Ajouter</button></div>
+      <div class="page-header"><div><h1>Sanctions</h1></div><button class="btn btn-warning" onclick="openModal('modal-sanction')">+ Ajouter</button></div>
       <div class="card"><div id="table-sanctions"></div></div>
     </div>
 
     <div id="page-banque" class="page">
       <div class="page-header">
-        <div><h1>● Banque</h1><p>Gestion financière — 3 rubriques</p></div>
+        <div><h1>Banque</h1><p>Gestion financière — 3 rubriques</p></div>
         <button class="btn btn-primary" onclick="openModal('modal-banque')">+ Transaction</button>
       </div>
       <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
-        <button class="btn btn-primary" id="tab-bs" onclick="switchBanque('scolaire')">● Banque scolaire</button>
-        <button class="btn btn-outline" id="tab-fr" onclick="switchBanque('fond')">● Fond de la réunion</button>
-        <button class="btn btn-outline" id="tab-ca" onclick="switchBanque('caisse')">● Caisse d'attente</button>
+        <button class="btn btn-primary" id="tab-bs" onclick="switchBanque('scolaire')">Banque scolaire</button>
+        <button class="btn btn-outline" id="tab-fr" onclick="switchBanque('fond')">Fond de la réunion</button>
+        <button class="btn btn-outline" id="tab-ca" onclick="switchBanque('caisse')">Caisse d'attente</button>
       </div>
       <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
-        <div class="stat-card"><div class="stat-icon" style="background:#d1fae5">●</div><div><div class="stat-value" id="banque-entrees">0 F</div><div class="stat-label">Entrées</div></div></div>
-        <div class="stat-card"><div class="stat-icon" style="background:#fee2e2">●</div><div><div class="stat-value" id="banque-sorties">0 F</div><div class="stat-label">Sorties</div></div></div>
-        <div class="stat-card"><div class="stat-icon" style="background:#dbeafe">●</div><div><div class="stat-value" id="banque-solde">0 F</div><div class="stat-label">Solde rubrique</div></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#d1fae5">Ent</div><div><div class="stat-value" id="banque-entrees">0 F</div><div class="stat-label">Entrées</div></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#fee2e2">Sor</div><div><div class="stat-value" id="banque-sorties">0 F</div><div class="stat-label">Sorties</div></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#dbeafe">Sol</div><div><div class="stat-value" id="banque-solde">0 F</div><div class="stat-label">Solde rubrique</div></div></div>
       </div>
       <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-top:0">
-        <div class="stat-card" style="background:#f0fdf4"><div class="stat-icon" style="background:#bbf7d0">●</div><div><div class="stat-value" id="global-bs">0 F</div><div class="stat-label">Banque scolaire</div></div></div>
-        <div class="stat-card" style="background:#fffbeb"><div class="stat-icon" style="background:#fef08a">●</div><div><div class="stat-value" id="global-fr">0 F</div><div class="stat-label">Fond réunion</div></div></div>
-        <div class="stat-card" style="background:#eff6ff"><div class="stat-icon" style="background:#bfdbfe">●</div><div><div class="stat-value" id="global-ca">0 F</div><div class="stat-label">Caisse attente</div></div></div>
+        <div class="stat-card" style="background:#f0fdf4"><div class="stat-icon" style="background:#bbf7d0">BS</div><div><div class="stat-value" id="global-bs">0 F</div><div class="stat-label">Banque scolaire</div></div></div>
+        <div class="stat-card" style="background:#fffbeb"><div class="stat-icon" style="background:#fef08a">FR</div><div><div class="stat-value" id="global-fr">0 F</div><div class="stat-label">Fond réunion</div></div></div>
+        <div class="stat-card" style="background:#eff6ff"><div class="stat-icon" style="background:#bfdbfe">CA</div><div><div class="stat-value" id="global-ca">0 F</div><div class="stat-label">Caisse attente</div></div></div>
       </div>
-      <div class="card"><div id="banque-rubrique-label" style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:10px">● BANQUE SCOLAIRE</div><div id="table-banque"></div></div>
+      <div class="card"><div id="banque-rubrique-label" style="font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:10px">BANQUE SCOLAIRE</div><div id="table-banque"></div></div>
     </div>
 
     <div id="page-caution" class="page">
-      <div class="page-header"><div><h1>● Caution</h1></div><button class="btn btn-primary" onclick="openModal('modal-caution')">+ Ajouter</button></div>
+      <div class="page-header"><div><h1>Caution</h1></div><button class="btn btn-primary" onclick="openModal('modal-caution')">+ Ajouter</button></div>
       <div class="card"><div id="table-caution"></div></div>
     </div>
 
     <div id="page-aide" class="page">
-      <div class="page-header"><div><h1>● Aide</h1></div><button class="btn btn-success" onclick="openModal('modal-aide')">+ Enregistrer</button></div>
+      <div class="page-header"><div><h1>Aide</h1></div><button class="btn btn-success" onclick="openModal('modal-aide')">+ Enregistrer</button></div>
       <div class="card"><div id="table-aide"></div></div>
     </div>
 
     <div id="page-retard" class="page">
-      <div class="page-header"><div><h1>● Retards</h1></div><button class="btn btn-warning" onclick="openModal('modal-retard')">+ Enregistrer</button></div>
+      <div class="page-header"><div><h1>Retards</h1></div><button class="btn btn-warning" onclick="openModal('modal-retard')">+ Enregistrer</button></div>
       <div class="card"><div id="table-retard"></div></div>
     </div>
 
     <div id="page-beneficiaires" class="page">
       <div class="page-header">
-        <div><h1>● Bénéficiaires</h1><p>Glisser-déposer pour réordonner — clôture irréversible</p></div>
+        <div><h1>Bénéficiaires</h1><p>Glisser-déposer pour réordonner — clôture irréversible</p></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-outline" id="btn-auto-queue" onclick="genererFileAuto()" title="Placer automatiquement les adhérents sans bénéfice en file d'attente">● File auto</button>
+          <button class="btn btn-outline" id="btn-auto-queue" onclick="genererFileAuto()" title="Placer automatiquement les adhérents sans bénéfice en file d'attente">File auto</button>
           <button id="btn-add-bene" class="btn btn-primary" onclick="openModal('modal-beneficiaire')">+ Ajouter</button>
         </div>
       </div>
@@ -158,12 +149,12 @@
           <div style="flex:1;min-width:110px"><label style="font-size:.72rem;font-weight:700;color:var(--muted);display:block;margin-bottom:3px">Lieu</label><input id="org-lieu" placeholder="Ville" style="width:100%"></div>
         </div>
       </div>
-      <div id="locked-banner" class="danger-banner" style="display:none">● <strong>Fiche(s) clôturée(s).</strong> Les fiches clôturées ne peuvent plus être modifiées ni supprimées.</div>
+      <div id="locked-banner" class="danger-banner" style="display:none"><strong>Fiche(s) clôturée(s).</strong> Les fiches clôturées ne peuvent plus être modifiées ni supprimées.</div>
       <div class="card"><div id="table-beneficiaires"></div></div>
     </div>
 
     <div id="page-utilisateurs" class="page">
-      <div class="page-header"><div><h1>● Utilisateurs</h1><p>Gestion des accès à la plateforme</p></div><button class="btn btn-primary" onclick="openModal('modal-user')">+ Créer</button></div>
+      <div class="page-header"><div><h1>Utilisateurs</h1><p>Gestion des accès à la plateforme</p></div><button class="btn btn-primary" onclick="openModal('modal-user')">+ Créer</button></div>
       <div class="info-banner">ℹ <strong>Bureau/Admin</strong> : accès complet. &nbsp; <strong>Adhérent</strong> : espace personnel uniquement (fonds, bénéfice du jour, file d'attente).</div>
       <div id="list-users"></div>
     </div>
@@ -171,9 +162,9 @@
     <!-- ══ COTISATIONS ══ -->
     <div id="page-cotisations" class="page">
       <div class="page-header">
-        <div><h1>● Cotisations</h1><p>Suivi par réunion — argent &amp; contributions en nature</p></div>
+        <div><h1>Cotisations</h1><p>Suivi par réunion — argent &amp; contributions en nature</p></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-outline" onclick="genererReunionsAuto()">● Générer réunions</button>
+          <button class="btn btn-outline" onclick="genererReunionsAuto()">Générer réunions</button>
           <button class="btn btn-primary" onclick="openCotisationReunion()">+ Saisir cotisations</button>
         </div>
       </div>
@@ -183,15 +174,15 @@
             <label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px">Réunion</label>
             <select id="cotis-reunion-select" onchange="renderCotisationsReunion()" style="width:100%"><option value="">-- Choisir une réunion --</option></select>
           </div>
-          <button class="btn btn-success" onclick="imprimerFeuillePresence()">● Feuille de présence</button>
+          <button class="btn btn-success" onclick="imprimerFeuillePresence()">Feuille de présence</button>
         </div>
       </div>
       <div id="cotis-resume" style="display:none">
         <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
-          <div class="stat-card"><div class="stat-icon" style="background:#d1fae5">●</div><div><div class="stat-value" id="cotis-total-argent">0 F</div><div class="stat-label">Total argent collecté</div></div></div>
-          <div class="stat-card"><div class="stat-icon" style="background:#fef3c7">●</div><div><div class="stat-value" id="cotis-total-huile">0</div><div class="stat-label">Bouteilles huile</div></div></div>
-          <div class="stat-card"><div class="stat-icon" style="background:#dbeafe">●</div><div><div class="stat-value" id="cotis-total-savon">0</div><div class="stat-label">Morceaux savon</div></div></div>
-          <div class="stat-card"><div class="stat-icon" style="background:#fee2e2">●</div><div><div class="stat-value" id="cotis-non-payes">0</div><div class="stat-label">Non payés</div></div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:#d1fae5">Arg</div><div><div class="stat-value" id="cotis-total-argent">0 F</div><div class="stat-label">Total argent collecté</div></div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:#fef3c7">Hle</div><div><div class="stat-value" id="cotis-total-huile">0</div><div class="stat-label">Bouteilles huile</div></div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:#dbeafe">Svn</div><div><div class="stat-value" id="cotis-total-savon">0</div><div class="stat-label">Morceaux savon</div></div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:#fee2e2">Imp</div><div><div class="stat-value" id="cotis-non-payes">0</div><div class="stat-label">Non payés</div></div></div>
         </div>
       </div>
       <div class="card"><div id="table-cotisations"></div></div>
@@ -199,24 +190,24 @@
 
     <!-- ══ PARAMÈTRES ══ -->
     <div id="page-parametres" class="page">
-      <div class="page-header"><div><h1>● Paramètres</h1><p>Configuration de votre association</p></div>
-        <button class="btn btn-primary" onclick="sauvegarderParametres()">● Enregistrer</button>
+      <div class="page-header"><div><h1>Paramètres</h1><p>Configuration de votre association</p></div>
+        <button class="btn btn-primary" onclick="sauvegarderParametres()">Enregistrer</button>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
         <div class="card">
-          <div class="card-title">● Informations de l'association</div>
+          <div class="card-title">Informations de l'association</div>
           <div class="form-group" style="margin-bottom:12px"><label>Nom de l'association</label><input id="p-nom" placeholder="Ex: COTISATIONS ET PROJET"></div>
           <div class="form-group" style="margin-bottom:12px"><label>Responsable / Trésorier</label><input id="p-responsable" placeholder="Nom du responsable"></div>
           <div class="form-group" style="margin-bottom:12px"><label>Lieu / Ville</label><input id="p-lieu" placeholder="Ex: Abidjan"></div>
           <div class="form-group"><label>Description</label><textarea id="p-desc" placeholder="Description de l'association..." style="height:60px"></textarea></div>
         </div>
         <div class="card">
-          <div class="card-title">● Fréquence des réunions</div>
+          <div class="card-title">Fréquence des réunions</div>
           <div class="form-group" style="margin-bottom:12px"><label>Type de réunion</label>
             <select id="p-frequence">
-              <option value="mensuelle">● Mensuelle (1x par mois)</option>
-              <option value="hebdomadaire">● Hebdomadaire (1x par semaine)</option>
-              <option value="journaliere">● Journalière (chaque jour)</option>
+              <option value="mensuelle">Mensuelle (1x par mois)</option>
+              <option value="hebdomadaire">Hebdomadaire (1x par semaine)</option>
+              <option value="journaliere">Journalière (chaque jour)</option>
             </select>
           </div>
           <div class="form-group" style="margin-bottom:12px"><label>Jour habituel (mensuel/hebdo)</label>
@@ -229,13 +220,13 @@
           <div class="form-group"><label>Nombre de réunions à générer</label><input id="p-nb-reunions" type="number" value="12" min="1" max="52"></div>
         </div>
         <div class="card">
-          <div class="card-title">● Montants de cotisation par défaut</div>
+          <div class="card-title">Montants de cotisation par défaut</div>
           <div class="form-group" style="margin-bottom:12px"><label>Cotisation principale (F CFA)</label><input id="p-cotisation" type="number" placeholder="100000" value="100000"></div>
           <div class="form-group" style="margin-bottom:12px"><label>Ration (F CFA)</label><input id="p-ration" type="number" placeholder="6000" value="6000"></div>
           <div class="form-group" style="margin-bottom:12px"><label>Amende retard (F CFA)</label><input id="p-amende" type="number" placeholder="2000" value="2000"></div>
         </div>
         <div class="card">
-          <div class="card-title">● Contributions en nature par défaut</div>
+          <div class="card-title">Contributions en nature par défaut</div>
           <div style="margin-bottom:14px">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
               <span style="font-size:.85rem;font-weight:600">Articles</span>
@@ -258,7 +249,7 @@
 
 <!-- ═══ MODALS ═══ -->
 <div id="modal-reunion" class="modal-overlay"><div class="modal">
-  <div class="modal-header"><div class="modal-title">● Réunion</div><button class="modal-close" onclick="closeModal('modal-reunion')">×</button></div>
+  <div class="modal-header"><div class="modal-title">Réunion</div><button class="modal-close" onclick="closeModal('modal-reunion')">×</button></div>
   <div class="form-grid">
     <div class="form-group full"><label>Titre</label><input id="r-titre" placeholder="Réunion mensuelle de janvier"></div>
     <div class="form-group"><label>Date</label><input id="r-date" type="date"></div>
@@ -267,12 +258,12 @@
     <div class="form-group"><label>Statut</label><select id="r-statut"><option>Planifiée</option><option>En cours</option><option>Terminée</option><option>Annulée</option></select></div>
     <div class="form-group full"><label>Ordre du jour</label><textarea id="r-odj" placeholder="Points à aborder..."></textarea></div>
   </div>
-  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-reunion')">Annuler</button><button class="btn btn-primary" onclick="saveReunion()">● Enregistrer</button></div>
+  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-reunion')">Annuler</button><button class="btn btn-primary" onclick="saveReunion()">Enregistrer</button></div>
 </div></div>
 
 <div id="modal-adherent" class="modal-overlay"><div class="modal">
   <input type="hidden" id="a-id">
-  <div class="modal-header"><div class="modal-title" id="modal-adherent-title">● Adhérent</div><button class="modal-close" onclick="closeModal('modal-adherent')">×</button></div>
+  <div class="modal-header"><div class="modal-title" id="modal-adherent-title">Adhérent</div><button class="modal-close" onclick="closeModal('modal-adherent')">×</button></div>
   <div class="form-grid">
     <div class="form-group"><label>Nom</label><input id="a-nom" placeholder="Nom de famille"></div>
     <div class="form-group"><label>Prénom</label><input id="a-prenom" placeholder="Prénom"></div>
@@ -283,11 +274,11 @@
     <div class="form-group"><label>Statut</label><select id="a-statut"><option>Actif</option><option>Inactif</option><option>Suspendu</option></select></div>
     <div class="form-group"><label>Cotisation (F)</label><input id="a-cotisation" type="number" placeholder="0"></div>
   </div>
-  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-adherent')">Annuler</button><button class="btn btn-primary" onclick="saveAdherent()">● Enregistrer</button></div>
+  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-adherent')">Annuler</button><button class="btn btn-primary" onclick="saveAdherent()">Enregistrer</button></div>
 </div></div>
 
 <div id="modal-sanction" class="modal-overlay"><div class="modal">
-  <div class="modal-header"><div class="modal-title">● Sanction</div><button class="modal-close" onclick="closeModal('modal-sanction')">×</button></div>
+  <div class="modal-header"><div class="modal-title">Sanction</div><button class="modal-close" onclick="closeModal('modal-sanction')">×</button></div>
   <div class="form-grid">
     <div class="form-group"><label>Adhérent</label><select id="s-adherent"></select></div>
     <div class="form-group"><label>Date</label><input id="s-date" type="date"></div>
@@ -296,17 +287,17 @@
     <div class="form-group full"><label>Motif</label><textarea id="s-motif" placeholder="Raison..."></textarea></div>
     <div class="form-group"><label>Statut</label><select id="s-statut"><option>En attente</option><option>Appliquée</option><option>Levée</option></select></div>
   </div>
-  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-sanction')">Annuler</button><button class="btn btn-warning" onclick="saveSanction()">● Enregistrer</button></div>
+  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-sanction')">Annuler</button><button class="btn btn-warning" onclick="saveSanction()">Enregistrer</button></div>
 </div></div>
 
 <div id="modal-banque" class="modal-overlay"><div class="modal">
-  <div class="modal-header"><div class="modal-title">● Transaction</div><button class="modal-close" onclick="closeModal('modal-banque')">×</button></div>
+  <div class="modal-header"><div class="modal-title">Transaction</div><button class="modal-close" onclick="closeModal('modal-banque')">×</button></div>
   <div class="form-grid">
     <div class="form-group full"><label>Rubrique</label>
       <select id="b-rubrique">
-        <option value="scolaire">● Banque scolaire</option>
-        <option value="fond">● Fond de la réunion</option>
-        <option value="caisse">● Caisse d'attente</option>
+        <option value="scolaire">Banque scolaire</option>
+        <option value="fond">Fond de la réunion</option>
+        <option value="caisse">Caisse d'attente</option>
       </select>
     </div>
     <div class="form-group"><label>Date</label><input id="b-date" type="date"></div>
@@ -316,11 +307,11 @@
     <div class="form-group"><label>Adhérent</label><select id="b-adherent"></select></div>
     <div class="form-group full"><label>Libellé</label><input id="b-libelle" placeholder="Description..."></div>
   </div>
-  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-banque')">Annuler</button><button class="btn btn-primary" onclick="saveBanque()">● Enregistrer</button></div>
+  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-banque')">Annuler</button><button class="btn btn-primary" onclick="saveBanque()">Enregistrer</button></div>
 </div></div>
 
 <div id="modal-caution" class="modal-overlay"><div class="modal">
-  <div class="modal-header"><div class="modal-title">● Caution</div><button class="modal-close" onclick="closeModal('modal-caution')">×</button></div>
+  <div class="modal-header"><div class="modal-title">Caution</div><button class="modal-close" onclick="closeModal('modal-caution')">×</button></div>
   <div class="form-grid">
     <div class="form-group"><label>Adhérent</label><select id="c-adherent"></select></div>
     <div class="form-group"><label>Date versement</label><input id="c-date" type="date"></div>
@@ -329,11 +320,11 @@
     <div class="form-group"><label>Statut</label><select id="c-statut"><option>Active</option><option>Remboursée</option><option>Saisie</option></select></div>
     <div class="form-group"><label>Échéance</label><input id="c-echeance" type="date"></div>
   </div>
-  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-caution')">Annuler</button><button class="btn btn-primary" onclick="saveCaution()">● Enregistrer</button></div>
+  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-caution')">Annuler</button><button class="btn btn-primary" onclick="saveCaution()">Enregistrer</button></div>
 </div></div>
 
 <div id="modal-aide" class="modal-overlay"><div class="modal">
-  <div class="modal-header"><div class="modal-title">● Aide</div><button class="modal-close" onclick="closeModal('modal-aide')">×</button></div>
+  <div class="modal-header"><div class="modal-title">Aide</div><button class="modal-close" onclick="closeModal('modal-aide')">×</button></div>
   <div class="form-grid">
     <div class="form-group"><label>Adhérent</label><select id="ai-adherent"></select></div>
     <div class="form-group"><label>Date</label><input id="ai-date" type="date"></div>
@@ -342,11 +333,11 @@
     <div class="form-group full"><label>Description</label><textarea id="ai-desc" placeholder="Détail..."></textarea></div>
     <div class="form-group"><label>Statut</label><select id="ai-statut"><option>Accordée</option><option>En attente</option><option>Refusée</option></select></div>
   </div>
-  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-aide')">Annuler</button><button class="btn btn-success" onclick="saveAide()">● Enregistrer</button></div>
+  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-aide')">Annuler</button><button class="btn btn-success" onclick="saveAide()">Enregistrer</button></div>
 </div></div>
 
 <div id="modal-retard" class="modal-overlay"><div class="modal">
-  <div class="modal-header"><div class="modal-title">● Retard</div><button class="modal-close" onclick="closeModal('modal-retard')">×</button></div>
+  <div class="modal-header"><div class="modal-title">Retard</div><button class="modal-close" onclick="closeModal('modal-retard')">×</button></div>
   <div class="form-grid">
     <div class="form-group"><label>Adhérent</label><select id="re-adherent"></select></div>
     <div class="form-group"><label>Réunion</label><select id="re-reunion"></select></div>
@@ -355,11 +346,11 @@
     <div class="form-group"><label>Amende (F)</label><input id="re-amende" type="number" placeholder="0"></div>
     <div class="form-group"><label>Justifié</label><select id="re-justifie"><option>Non</option><option>Oui</option></select></div>
   </div>
-  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-retard')">Annuler</button><button class="btn btn-warning" onclick="saveRetard()">● Enregistrer</button></div>
+  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-retard')">Annuler</button><button class="btn btn-warning" onclick="saveRetard()">Enregistrer</button></div>
 </div></div>
 
 <div id="modal-beneficiaire" class="modal-overlay"><div class="modal">
-  <div class="modal-header"><div class="modal-title">● Bénéficiaire</div><button class="modal-close" onclick="closeModal('modal-beneficiaire')">×</button></div>
+  <div class="modal-header"><div class="modal-title">Bénéficiaire</div><button class="modal-close" onclick="closeModal('modal-beneficiaire')">×</button></div>
   <div class="form-grid">
     <div class="form-group"><label>Adhérent</label><select id="be-adherent"></select></div>
     <div class="form-group"><label>Date</label><input id="be-date" type="date"></div>
@@ -369,11 +360,11 @@
     <div class="form-group"><label>Statut</label><select id="be-statut"><option>En attente</option><option>Attribué</option><option>Clôturé</option></select></div>
   </div>
   <input type="hidden" id="be-edit-id">
-  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-beneficiaire')">Annuler</button><button class="btn btn-primary" onclick="saveBeneficiaire()">● Enregistrer</button></div>
+  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-beneficiaire')">Annuler</button><button class="btn btn-primary" onclick="saveBeneficiaire()">Enregistrer</button></div>
 </div></div>
 
 <div id="modal-user" class="modal-overlay"><div class="modal">
-  <div class="modal-header"><div class="modal-title">● Utilisateur</div><button class="modal-close" onclick="closeModal('modal-user')">×</button></div>
+  <div class="modal-header"><div class="modal-title">Utilisateur</div><button class="modal-close" onclick="closeModal('modal-user')">×</button></div>
   <input type="hidden" id="u-id">
   <div class="form-grid">
     <div class="form-group"><label>Identifiant (login)</label><input id="u-login" placeholder="joseph.koho"></div>
@@ -389,16 +380,16 @@
     <div class="form-group"><label>Adhérent lié (rôle membre)</label><select id="u-adherent"><option value="">-- Aucun --</option></select></div>
     <div class="form-group"><label>Statut</label><select id="u-statut"><option>Actif</option><option>Inactif</option></select></div>
   </div>
-  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-user')">Annuler</button><button class="btn btn-primary" onclick="saveUser()">● Enregistrer</button></div>
+  <div class="form-actions"><button class="btn btn-outline" onclick="closeModal('modal-user')">Annuler</button><button class="btn btn-primary" onclick="saveUser()">Enregistrer</button></div>
 </div></div>
 
 <div id="modal-fiche" class="modal-overlay"><div class="modal modal-lg">
   <div class="modal-header no-print">
-    <div class="modal-title">● Fiche Bénéficiaire</div>
+    <div class="modal-title">Fiche Bénéficiaire</div>
     <button class="modal-close" onclick="closeModal('modal-fiche')">×</button>
   </div>
   <div class="form-actions no-print" style="margin-bottom:12px;justify-content:flex-start">
-    <button class="btn btn-primary" onclick="window.print()">● Télécharger</button>
+    <button class="btn btn-primary" onclick="window.print()">Télécharger</button>
     <button class="btn btn-outline" onclick="closeModal('modal-fiche')">Fermer</button>
   </div>
   <div id="print-zone"><div id="fiche-content" class="fiche-preview"></div></div>
@@ -406,7 +397,7 @@
 
 <!-- MODAL SAISIE COTISATION PAR RÉUNION -->
 <div id="modal-cotisation" class="modal-overlay"><div class="modal" style="width:680px;max-width:98vw">
-  <div class="modal-header"><div class="modal-title">● Saisie des cotisations</div><button class="modal-close" onclick="closeModal('modal-cotisation')">×</button></div>
+  <div class="modal-header"><div class="modal-title">Saisie des cotisations</div><button class="modal-close" onclick="closeModal('modal-cotisation')">×</button></div>
   <div style="margin-bottom:14px">
     <label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px">Réunion concernée</label>
     <select id="cotis-modal-reunion" style="width:100%" onchange="chargerLigneCotisation()"></select>
@@ -414,18 +405,18 @@
   <div id="cotis-modal-lignes"></div>
   <div class="form-actions" style="margin-top:12px">
     <button class="btn btn-outline" onclick="closeModal('modal-cotisation')">Fermer</button>
-    <button class="btn btn-primary" onclick="sauvegarderCotisations()">● Tout enregistrer</button>
+    <button class="btn btn-primary" onclick="sauvegarderCotisations()">Tout enregistrer</button>
   </div>
 </div></div>
 
 <!-- MODAL FEUILLE PRÉSENCE (impression) -->
 <div id="modal-presence" class="modal-overlay"><div class="modal" style="width:780px;max-width:98vw">
   <div class="modal-header no-print">
-    <div class="modal-title">● Feuille de présence / Cotisation</div>
+    <div class="modal-title">Feuille de présence / Cotisation</div>
     <button class="modal-close" onclick="closeModal('modal-presence')">×</button>
   </div>
   <div class="form-actions no-print" style="margin-bottom:12px;justify-content:flex-start">
-    <button class="btn btn-primary" onclick="window.print()">● Télécharger</button>
+    <button class="btn btn-primary" onclick="window.print()">Télécharger</button>
     <button class="btn btn-outline" onclick="closeModal('modal-presence')">Fermer</button>
   </div>
   <div id="print-zone"><div id="feuille-presence-content"></div></div>
