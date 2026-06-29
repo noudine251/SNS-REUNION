@@ -416,7 +416,7 @@
     <button class="modal-close" onclick="closeModal('modal-presence')">×</button>
   </div>
   <div class="form-actions no-print" style="margin-bottom:12px;justify-content:flex-start">
-    <button class="btn btn-primary" onclick="window.print()">Télécharger PDF</button>
+    <button class="btn btn-primary" onclick="imprimerPresence()">Télécharger PDF</button>
     <button class="btn btn-outline" onclick="closeModal('modal-presence')">Fermer</button>
   </div>
   <div id="presence-print-zone"><div id="feuille-presence-content"></div></div>
@@ -433,10 +433,52 @@
     localStorage.setItem('_app_stamp',STAMP);
   }
 })();
+window.imprimerPresence = function() {
+  var el = document.getElementById('feuille-presence-content');
+  if (!el || !el.innerHTML.trim()) return;
+  var html = '<!DOCTYPE html><html><head>' +
+    '<meta charset="UTF-8">' +
+    '<meta name="viewport" content="width=1200">' +
+    '<title>Feuille de Presence</title>' +
+    '<style>' +
+    '@page{size:A4 landscape;margin:6mm;}' +
+    '*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}' +
+    'body{width:1150px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;background:#fff;color:#1e293b;font-size:11px;}' +
+    'table{border-collapse:collapse;width:100%;}' +
+    'td,th{border:1px solid #ccc;padding:4px 3px;font-size:10px;}' +
+    '</style>' +
+    '</head><body>' +
+    el.innerHTML +
+    '<script>window.onload=function(){setTimeout(function(){window.print();},400);};<\/script>' +
+    '</body></html>';
+  var blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var win = window.open(url, '_blank');
+  if (!win) { window.location.href = url; }
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 120000);
+};
+
 window.imprimerFiche = function() {
   var el = document.getElementById('fiche-content');
   if (!el || !el.innerHTML.trim()) return;
-  window.print();
+  var html = '<!DOCTYPE html><html><head>' +
+    '<meta charset="UTF-8">' +
+    '<meta name="viewport" content="width=800">' +
+    '<title>Fiche Beneficiaire</title>' +
+    '<style>' +
+    '@page{size:A4 portrait;margin:10mm;}' +
+    '*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}' +
+    'body{width:780px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;background:#fff;color:#1e293b;font-size:13px;}' +
+    '</style>' +
+    '</head><body>' +
+    el.innerHTML +
+    '<script>window.onload=function(){setTimeout(function(){window.print();},400);};<\/script>' +
+    '</body></html>';
+  var blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var win = window.open(url, '_blank');
+  if (!win) { window.location.href = url; }
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 120000);
 };
 
 window.telechargerPDF = function(elementId, nomFichier, orientation) {
