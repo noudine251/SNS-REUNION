@@ -416,46 +416,86 @@ window.voirFiche = function (id) {
   const autres = state.beneficiaires.filter(x => x.adherentId === b.adherentId);
   const sanctions_l = state.sanctions.filter(s => s.adherentId === b.adherentId);
   const aides_l = state.aide.filter(x => x.adherentId === b.adherentId);
-  const lockedInfo = b.locked ? `<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:.78rem;color:#dc2626"><strong>Fiche clôturée — Document officiel non modifiable</strong></div>` : '';
+  const statutColor = b.statut === 'Attribué' ? '#16a34a' : b.statut === 'Clôturé' ? '#64748b' : '#f97316';
+  const S = {
+    wrap: 'font-family:Arial,Helvetica,sans-serif;width:100%;box-sizing:border-box;padding:20px;background:#fff;color:#1e293b;font-size:.85rem',
+    header: 'display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:8px',
+    org: 'font-size:1.1rem;font-weight:800;color:#1a3c6e;text-transform:uppercase;letter-spacing:1px',
+    sub: 'font-size:.76rem;color:#64748b;margin-top:2px',
+    qr: 'width:48px;height:48px;background:repeating-linear-gradient(45deg,#1a3c6e,#1a3c6e 2px,#fff 2px,#fff 5px);border:2px solid #1a3c6e;border-radius:4px',
+    refTxt: 'font-size:.64rem;color:#64748b;margin-top:2px;text-align:right',
+    titleBox: 'background:#1a3c6e;color:#fff;text-align:center;padding:7px 14px;border-radius:7px;font-size:.92rem;font-weight:700;letter-spacing:1px;margin:10px 0',
+    locked: 'background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:.78rem;color:#dc2626',
+    statut: `display:inline-block;padding:3px 12px;border-radius:20px;background:${statutColor};color:#fff;font-size:.76rem;font-weight:700`,
+    section: 'margin-bottom:14px',
+    sTitle: 'background:#f1f5f9;border-left:4px solid #2563eb;padding:5px 10px;font-weight:700;font-size:.74rem;color:#1a3c6e;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;border-radius:0 6px 6px 0',
+    row: 'display:flex;gap:8px;margin-bottom:6px;align-items:flex-start;flex-wrap:wrap',
+    label: 'font-weight:600;color:#64748b;width:140px;min-width:120px;font-size:.78rem;flex-shrink:0',
+    value: 'color:#1e293b;font-size:.84rem;flex:1;border-bottom:1px dotted #ccc;padding-bottom:2px;min-width:100px',
+    montantBox: 'background:linear-gradient(135deg,#1a3c6e,#2563eb);color:#fff;border-radius:10px;padding:13px 18px;text-align:center;margin:12px 0',
+    montantLbl: 'font-size:.7rem;opacity:.85;text-transform:uppercase;letter-spacing:1px',
+    montantVal: 'font-size:1.5rem;font-weight:800;margin-top:4px',
+    montantLet: 'font-size:.74rem;opacity:.85;margin-top:3px;font-style:italic',
+    traceBox: 'background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:6px',
+    traceItem: 'display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:.78rem',
+    traceDot: 'width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0',
+    traceTime: 'color:#64748b;font-size:.72rem;min-width:72px;flex-shrink:0',
+    sigWrap: 'display:flex;gap:18px;margin-top:20px;border-top:2px solid #e2e8f0;padding-top:14px;flex-wrap:wrap',
+    sigBox: 'flex:1;min-width:140px;text-align:center',
+    sigLine: 'border-bottom:1.5px solid #333;margin:30px 0 6px',
+    sigLbl: 'font-size:.7rem;font-weight:700;color:#64748b;text-transform:uppercase',
+    footer: 'text-align:center;margin-top:14px;padding-top:10px;border-top:1px solid #e2e8f0;font-size:.68rem;color:#64748b;font-style:italic'
+  };
+  const row = (lbl, val) => `<div style="${S.row}"><span style="${S.label}">${lbl}</span><span style="${S.value}">${val}</span></div>`;
+  const traceItem = (dotColor, date, content) => `<div style="${S.traceItem}"><div style="${S.traceDot};background:${dotColor}"></div><div style="${S.traceTime}">${date}</div><div style="flex:1">${content}</div></div>`;
   document.getElementById('fiche-content').innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px">
-      <div><div class="fiche-org">${orgNom}</div><div class="fiche-subtitle">Gestion des Réunions & Prestations</div></div>
-      <div style="text-align:right"><div class="fiche-qr"></div><div style="font-size:.66rem;color:var(--muted);margin-top:2px">${ref}</div></div>
-    </div>
-    <div class="fiche-title-box">FICHE DE BÉNÉFICIAIRE</div>
-    ${lockedInfo}
-    <div style="text-align:center;margin-bottom:14px"><span class="badge ${b.statut === 'Attribué' ? 'badge-success' : b.statut === 'Clôturé' ? 'badge-gray' : 'badge-warning'}">${b.statut}</span> <span style="font-size:.75rem;color:var(--muted)">Émise le ${dateEm} à ${heureEm}</span></div>
-    <div class="fiche-section"><div class="fiche-section-title">Informations du Bénéficiaire</div>
-      <div class="fiche-row"><span class="fiche-label">Nom & Prénom :</span><span class="fiche-value"><strong>${a.prenom || ''} ${a.nom || b.adherentNom}</strong></span></div>
-      <div class="fiche-row"><span class="fiche-label">Téléphone :</span><span class="fiche-value">${a.tel || '—'}</span></div>
-      <div class="fiche-row"><span class="fiche-label">Email :</span><span class="fiche-value">${a.email || '—'}</span></div>
-      <div class="fiche-row"><span class="fiche-label">Profession :</span><span class="fiche-value">${a.profession || '—'}</span></div>
-      <div class="fiche-row"><span class="fiche-label">Date d'adhésion :</span><span class="fiche-value">${a.date || '—'}</span></div>
-    </div>
-    <div class="fiche-section"><div class="fiche-section-title">Détail de la Prestation</div>
-      <div class="fiche-row"><span class="fiche-label">Référence :</span><span class="fiche-value"><strong>${ref}</strong></span></div>
-      <div class="fiche-row"><span class="fiche-label">Date :</span><span class="fiche-value">${b.date || '—'}</span></div>
-      <div class="fiche-row"><span class="fiche-label">Type :</span><span class="fiche-value"><strong>${b.type}</strong></span></div>
-      <div class="fiche-row"><span class="fiche-label">Description :</span><span class="fiche-value">${b.desc || '—'}</span></div>
-      <div class="fiche-row"><span class="fiche-label">Rang dans la file :</span><span class="fiche-value">#${b.ordre || '—'}</span></div>
-    </div>
-    <div class="fiche-montant-box"><div class="fiche-montant-label">Valeur de la prestation</div>
-      <div class="fiche-montant-value">${b.valeur ? Number(b.valeur).toLocaleString() + ' F CFA' : 'Non monétaire'}</div>
-      ${b.valeur ? `<div class="fiche-montant-lettres">(${nombreEnLettres(Number(b.valeur))})</div>` : ''}
-    </div>
-    <div class="fiche-section"><div class="fiche-section-title">Traçabilité</div>
-      <div class="tracabilite-log">
-        <div style="font-size:.75rem;font-weight:700;color:var(--primary);margin-bottom:6px">Prestations (${autres.length})</div>
-        ${autres.length ? autres.map(x => `<div class="tracabilite-item"><div class="tracabilite-dot" style="background:${x.id === b.id ? 'var(--accent)' : 'var(--secondary)'}"></div><div class="tracabilite-time">${x.date || '—'}</div><div style="flex:1"><strong>${x.type}</strong>${x.valeur ? ' — ' + Number(x.valeur).toLocaleString() + ' F' : ''}${x.desc ? ' — ' + x.desc : ''} <span class="badge ${x.id === b.id ? 'badge-warning' : 'badge-info'}" style="font-size:.68rem">${x.id === b.id ? '← Actuelle' : 'passée'}</span>${x.locked ? ' ' : ''}</div></div>`).join('') : '<div style="color:var(--muted);font-size:.78rem;padding:5px">Aucune autre prestation</div>'}
+    <div style="${S.wrap}">
+      <div style="${S.header}">
+        <div><div style="${S.org}">${orgNom}</div><div style="${S.sub}">Gestion des Réunions &amp; Prestations</div></div>
+        <div style="text-align:right"><div style="${S.qr}"></div><div style="${S.refTxt}">${ref}</div></div>
       </div>
-      ${sanctions_l.length ? `<div class="tracabilite-log" style="margin-top:7px"><div style="font-size:.75rem;font-weight:700;color:#991b1b;margin-bottom:6px">Sanctions (${sanctions_l.length})</div>${sanctions_l.map(s => `<div class="tracabilite-item"><div class="tracabilite-dot" style="background:var(--danger)"></div><div class="tracabilite-time">${s.date || '—'}</div><div style="flex:1">${s.type}${s.montant ? ' — ' + Number(s.montant).toLocaleString() + ' F' : ''} — ${s.motif || '—'} [${s.statut}]</div></div>`).join('')}</div>` : ''}
-      ${aides_l.length ? `<div class="tracabilite-log" style="margin-top:7px"><div style="font-size:.75rem;font-weight:700;color:#065f46;margin-bottom:6px">Aides (${aides_l.length})</div>${aides_l.map(x => `<div class="tracabilite-item"><div class="tracabilite-dot" style="background:var(--success)"></div><div class="tracabilite-time">${x.date || '—'}</div><div style="flex:1">${x.type}${x.montant ? ' — ' + Number(x.montant).toLocaleString() + ' F' : ''}${x.desc ? ' — ' + x.desc : ''} [${x.statut}]</div></div>`).join('')}</div>` : ''}
-    </div>
-    <div class="fiche-signatures">
-      <div class="fiche-sig-box"><div class="fiche-sig-line"></div><div class="fiche-sig-label">Le Bénéficiaire</div><div style="font-size:.78rem;margin-top:2px">${a.prenom || ''} ${a.nom || b.adherentNom}</div></div>
-      <div class="fiche-sig-box"><div class="fiche-sig-line"></div><div class="fiche-sig-label">Le Responsable</div><div style="font-size:.78rem;margin-top:2px">${orgResp}</div></div>
-    </div>
-    <div class="fiche-footer">Émise par ${orgNom} — ${orgLieu} — le ${dateEm} à ${heureEm} | Réf: ${ref}</div>`;
+      <div style="${S.titleBox}">FICHE DE BÉNÉFICIAIRE</div>
+      ${b.locked ? `<div style="${S.locked}"><strong>Fiche clôturée — Document officiel non modifiable</strong></div>` : ''}
+      <div style="text-align:center;margin-bottom:12px">
+        <span style="${S.statut}">${b.statut}</span>
+        <span style="font-size:.74rem;color:#64748b;margin-left:8px">Émise le ${dateEm} à ${heureEm}</span>
+      </div>
+      <div style="${S.section}">
+        <div style="${S.sTitle}">Informations du Bénéficiaire</div>
+        ${row('Nom &amp; Prénom :', `<strong>${a.prenom || ''} ${a.nom || b.adherentNom}</strong>`)}
+        ${row('Téléphone :', a.tel || '—')}
+        ${row('Email :', a.email || '—')}
+        ${row('Profession :', a.profession || '—')}
+        ${row("Date d'adhésion :", a.date || '—')}
+      </div>
+      <div style="${S.section}">
+        <div style="${S.sTitle}">Détail de la Prestation</div>
+        ${row('Référence :', `<strong>${ref}</strong>`)}
+        ${row('Date :', b.date || '—')}
+        ${row('Type :', `<strong>${b.type}</strong>`)}
+        ${row('Description :', b.desc || '—')}
+        ${row('Rang dans la file :', '#' + (b.ordre || '—'))}
+      </div>
+      <div style="${S.montantBox}">
+        <div style="${S.montantLbl}">Valeur de la prestation</div>
+        <div style="${S.montantVal}">${b.valeur ? Number(b.valeur).toLocaleString() + ' F CFA' : 'Non monétaire'}</div>
+        ${b.valeur ? `<div style="${S.montantLet}">(${nombreEnLettres(Number(b.valeur))})</div>` : ''}
+      </div>
+      <div style="${S.section}">
+        <div style="${S.sTitle}">Traçabilité</div>
+        <div style="${S.traceBox}">
+          <div style="font-size:.74rem;font-weight:700;color:#1a3c6e;margin-bottom:6px">Prestations (${autres.length})</div>
+          ${autres.length ? autres.map(x => traceItem(x.id === b.id ? '#f59e0b' : '#2563eb', x.date || '—', `<strong>${x.type}</strong>${x.valeur ? ' — ' + Number(x.valeur).toLocaleString() + ' F' : ''}${x.desc ? ' — ' + x.desc : ''} <span style="display:inline-block;padding:1px 6px;border-radius:10px;background:${x.id === b.id ? '#f97316' : '#3b82f6'};color:#fff;font-size:.65rem">${x.id === b.id ? '← Actuelle' : 'passée'}</span>`)).join('') : '<div style="color:#64748b;font-size:.78rem">Aucune prestation</div>'}
+        </div>
+        ${sanctions_l.length ? `<div style="${S.traceBox}"><div style="font-size:.74rem;font-weight:700;color:#991b1b;margin-bottom:6px">Sanctions (${sanctions_l.length})</div>${sanctions_l.map(s => traceItem('#ef4444', s.date || '—', `${s.type}${s.montant ? ' — ' + Number(s.montant).toLocaleString() + ' F' : ''} — ${s.motif || '—'} [${s.statut}]`)).join('')}</div>` : ''}
+        ${aides_l.length ? `<div style="${S.traceBox}"><div style="font-size:.74rem;font-weight:700;color:#065f46;margin-bottom:6px">Aides (${aides_l.length})</div>${aides_l.map(x => traceItem('#10b981', x.date || '—', `${x.type}${x.montant ? ' — ' + Number(x.montant).toLocaleString() + ' F' : ''}${x.desc ? ' — ' + x.desc : ''} [${x.statut}]`)).join('')}</div>` : ''}
+      </div>
+      <div style="${S.sigWrap}">
+        <div style="${S.sigBox}"><div style="${S.sigLine}"></div><div style="${S.sigLbl}">Le Bénéficiaire</div><div style="font-size:.76rem;margin-top:2px">${a.prenom || ''} ${a.nom || b.adherentNom}</div></div>
+        <div style="${S.sigBox}"><div style="${S.sigLine}"></div><div style="${S.sigLbl}">Le Responsable</div><div style="font-size:.76rem;margin-top:2px">${orgResp}</div></div>
+      </div>
+      <div style="${S.footer}">Émise par ${orgNom} — ${orgLieu} — le ${dateEm} à ${heureEm} | Réf: ${ref}</div>
+    </div>`;
   openModal('modal-fiche');
 };
 

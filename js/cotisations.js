@@ -185,54 +185,61 @@ window.imprimerFeuillePresence = function () {
   const titre = r ? r.titre : "Réunion";
   const dateR = r ? new Date(r.date).toLocaleDateString("fr-FR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }) : "—";
   const adherents = state.adherents.filter(a => a.statut === "Actif");
-  const colsNature = params.articles.map(a => `<th style="min-width:80px">${a.nom}<br><small>${a.qteDefaut} ${a.unite}</small></th>`).join("");
+  const th = `padding:4px 3px;border:1px solid #ccc;font-size:.6rem;text-align:center;white-space:nowrap`;
+  const td = `text-align:center;padding:4px 3px;border:1px solid #ccc;font-size:.62rem`;
+  const colsNature = params.articles.map(a => `<th style="${th}">${a.nom}<br><small>${a.qteDefaut} ${a.unite}</small></th>`).join("");
   const rows = adherents.map((a, i) => {
     const l = state.cotisations.find(x => x.reunionId === rId && x.adherentId === a.id);
-    const statusBadge = "";
     return `<tr>
-      <td style="text-align:center">${i + 1}</td>
-      <td><strong>${a.prenom} ${a.nom}</strong></td>
-      <td style="text-align:center">${l ? (l.argent?.cotisation || 0).toLocaleString() + " F" : params.cotisation.toLocaleString() + " F"}</td>
-      <td style="text-align:center">${l ? (l.argent?.ration || 0).toLocaleString() + " F" : params.ration.toLocaleString() + " F"}</td>
-      ${params.articles.map(art => { const n = l?.nature?.find(n => n.nom === art.nom); return `<td style="text-align:center">${l ? (n && n.fait ? n.qte : "—") : "□"}</td>`; }).join("")}
-      <td style="text-align:center">${statusBadge} ${l ? l.statut : ""}</td>
-      <td style="min-width:80px"></td>
+      <td style="${td}">${i + 1}</td>
+      <td style="padding:4px 3px;border:1px solid #ccc;font-size:.62rem">${a.prenom} ${a.nom}</td>
+      <td style="${td}">${l ? (l.argent?.cotisation || 0).toLocaleString() + " F" : params.cotisation.toLocaleString() + " F"}</td>
+      <td style="${td}">${l ? (l.argent?.ration || 0).toLocaleString() + " F" : params.ration.toLocaleString() + " F"}</td>
+      <td style="${td}">${l ? (l.argent?.penalite || 0).toLocaleString() + " F" : "0 F"}</td>
+      ${params.articles.map(art => { const n = l?.nature?.find(n => n.nom === art.nom); return `<td style="${td}">${l ? (n && n.fait ? n.qte : "—") : "□"}</td>`; }).join("")}
+      <td style="${td};font-weight:700">${l ? (l.argent?.total || 0).toLocaleString() + " F" : "—"}</td>
+      <td style="${td}">${l ? l.statut : ""}</td>
+      <td style="padding:4px 3px;border:1px solid #ccc"></td>
     </tr>`;
   }).join("");
   document.getElementById("feuille-presence-content").innerHTML = `
-    <div style="font-family:Arial,sans-serif;max-width:100%;padding:10px">
-      <div style="text-align:center;border-bottom:3px double #1a3c6e;padding-bottom:14px;margin-bottom:16px">
-        <div style="font-size:1.3rem;font-weight:800;color:#1a3c6e;text-transform:uppercase;letter-spacing:1px">${params.nom || "ASSOCIATION"}</div>
-        <div style="font-size:.85rem;color:#64748b;margin-top:4px">${params.lieu || ""}</div>
-        <div style="background:#1a3c6e;color:white;padding:8px 20px;border-radius:6px;display:inline-block;margin-top:10px;font-weight:700;font-size:.95rem">
-          FEUILLE DE PRÉSENCE &amp; COTISATION
-        </div>
-        <div style="margin-top:10px;font-size:.88rem"><strong>${titre}</strong> — ${dateR}</div>
-        <div style="font-size:.8rem;color:#64748b;margin-top:4px">Heure : ${r?.heure || params.heure || "09:00"} &nbsp;|&nbsp; Lieu : ${r?.lieu || params.lieu || "—"} &nbsp;|&nbsp; Membres présents : ___/___</div>
+    <div style="font-family:Arial,sans-serif;width:100%;box-sizing:border-box;padding:8px">
+      <div style="text-align:center;border-bottom:2px solid #1a3c6e;padding-bottom:10px;margin-bottom:12px">
+        <div style="font-size:1rem;font-weight:800;color:#1a3c6e;text-transform:uppercase;letter-spacing:1px">${params.nom || "ASSOCIATION"}</div>
+        <div style="font-size:.75rem;color:#64748b;margin-top:3px">${params.lieu || ""}</div>
+        <div style="background:#1a3c6e;color:white;padding:5px 14px;border-radius:5px;display:inline-block;margin-top:8px;font-weight:700;font-size:.8rem">FEUILLE DE PRÉSENCE &amp; COTISATION</div>
+        <div style="margin-top:8px;font-size:.8rem"><strong>${titre}</strong> — ${dateR}</div>
+        <div style="font-size:.72rem;color:#64748b;margin-top:3px">Heure : ${r?.heure || params.heure || "09:00"} &nbsp;|&nbsp; Lieu : ${r?.lieu || params.lieu || "—"} &nbsp;|&nbsp; Présents : ___/___</div>
       </div>
-      <table style="width:100%;border-collapse:collapse;font-size:.8rem">
+      <div style="overflow-x:auto;width:100%">
+      <table style="width:100%;border-collapse:collapse;table-layout:auto">
         <thead>
           <tr style="background:#1a3c6e;color:white">
-            <th style="padding:7px;border:1px solid #ccc">#</th>
-            <th style="padding:7px;border:1px solid #ccc;min-width:140px">Nom & Prénom</th>
-            <th style="padding:7px;border:1px solid #ccc">Cotisation</th>
-            <th style="padding:7px;border:1px solid #ccc">Ration</th>
+            <th style="${th}">#</th>
+            <th style="${th};min-width:90px;text-align:left">Nom & Prénom</th>
+            <th style="${th}">Cotisation</th>
+            <th style="${th}">Ration</th>
+            <th style="${th}">Pénalité</th>
             ${colsNature}
-            <th style="padding:7px;border:1px solid #ccc">Statut</th>
-            <th style="padding:7px;border:1px solid #ccc">Signature</th>
+            <th style="${th}">Total</th>
+            <th style="${th}">Statut</th>
+            <th style="${th};min-width:60px">Signature</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
         <tfoot>
           <tr style="background:#f1f5f9;font-weight:700">
-            <td colspan="2" style="padding:7px;border:1px solid #ccc">TOTAL</td>
-            <td style="padding:7px;border:1px solid #ccc;text-align:center">${state.cotisations.filter(x => x.reunionId === rId).reduce((s, l) => s + (l.argent?.cotisation || 0), 0).toLocaleString()} F</td>
-            <td style="padding:7px;border:1px solid #ccc;text-align:center">${state.cotisations.filter(x => x.reunionId === rId).reduce((s, l) => s + (l.argent?.ration || 0), 0).toLocaleString()} F</td>
-            ${params.articles.map(art => { const tot = state.cotisations.filter(x => x.reunionId === rId).reduce((s, l) => { const n = l.nature?.find(n => n.nom === art.nom); return s + (n && n.fait ? n.qte : 0); }, 0); return `<td style="padding:7px;border:1px solid #ccc;text-align:center;font-weight:700">${tot} ${art.unite}</td>`; }).join("")}
-            <td colspan="2" style="padding:7px;border:1px solid #ccc"></td>
+            <td colspan="2" style="${td};text-align:left">TOTAL</td>
+            <td style="${td}">${state.cotisations.filter(x => x.reunionId === rId).reduce((s, l) => s + (l.argent?.cotisation || 0), 0).toLocaleString()} F</td>
+            <td style="${td}">${state.cotisations.filter(x => x.reunionId === rId).reduce((s, l) => s + (l.argent?.ration || 0), 0).toLocaleString()} F</td>
+            <td style="${td}">${state.cotisations.filter(x => x.reunionId === rId).reduce((s, l) => s + (l.argent?.penalite || 0), 0).toLocaleString()} F</td>
+            ${params.articles.map(art => { const tot = state.cotisations.filter(x => x.reunionId === rId).reduce((s, l) => { const n = l.nature?.find(n => n.nom === art.nom); return s + (n && n.fait ? n.qte : 0); }, 0); return `<td style="${td}">${tot} ${art.unite}</td>`; }).join("")}
+            <td style="${td}">${state.cotisations.filter(x => x.reunionId === rId).reduce((s, l) => s + (l.argent?.total || 0), 0).toLocaleString()} F</td>
+            <td colspan="2" style="${td}"></td>
           </tr>
         </tfoot>
       </table>
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:40px;padding-top:16px;border-top:2px solid #e2e8f0">
         <div style="text-align:center"><div style="border-bottom:1.5px solid #333;margin:36px 0 6px"></div><div style="font-size:.75rem;font-weight:700;text-transform:uppercase;color:#64748b">Le Trésorier / ${params.responsable || "Responsable"}</div></div>
         <div style="text-align:center"><div style="border-bottom:1.5px solid #333;margin:36px 0 6px"></div><div style="font-size:.75rem;font-weight:700;text-transform:uppercase;color:#64748b">Le Président / Secrétaire</div></div>

@@ -187,4 +187,12 @@ tr.drag-over td{border-top:3px solid var(--secondary);}
 .meeting-item:hover{box-shadow:0 3px 12px rgba(0,0,0,.08);border-color:var(--secondary);}
 .info-banner{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:9px 13px;font-size:.8rem;color:#1e40af;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
 .danger-banner{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:9px 13px;font-size:.8rem;color:#dc2626;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
-@media print{body *{visibility:hidden;}#print-zone,#print-zone *{visibility:visible;}#print-zone{position:fixed;inset:0;background:white;padding:20px;}.no-print{display:none!important;}}
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  body *{visibility:hidden;}
+  .no-print{display:none!important;}
+  #fiche-print-zone,#fiche-print-zone *{visibility:visible;}
+  #fiche-print-zone{position:fixed;inset:0;background:white;padding:12mm 10mm;overflow:visible;z-index:99999;}
+  #presence-print-zone,#presence-print-zone *{visibility:visible;}
+  #presence-print-zone{position:fixed;inset:0;background:white;padding:8mm 6mm;overflow:visible;z-index:99999;}
+}

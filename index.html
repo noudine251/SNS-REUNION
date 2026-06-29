@@ -389,10 +389,10 @@
     <button class="modal-close" onclick="closeModal('modal-fiche')">×</button>
   </div>
   <div class="form-actions no-print" style="margin-bottom:12px;justify-content:flex-start">
-    <button class="btn btn-primary" onclick="window.print()">Télécharger</button>
+    <button class="btn btn-primary" onclick="imprimerFiche()">Télécharger PDF</button>
     <button class="btn btn-outline" onclick="closeModal('modal-fiche')">Fermer</button>
   </div>
-  <div id="print-zone"><div id="fiche-content" class="fiche-preview"></div></div>
+  <div id="fiche-print-zone"><div id="fiche-content"></div></div>
 </div></div>
 
 <!-- MODAL SAISIE COTISATION PAR RÉUNION -->
@@ -416,13 +416,14 @@
     <button class="modal-close" onclick="closeModal('modal-presence')">×</button>
   </div>
   <div class="form-actions no-print" style="margin-bottom:12px;justify-content:flex-start">
-    <button class="btn btn-primary" onclick="window.print()">Télécharger</button>
+    <button class="btn btn-primary" onclick="window.print()">Télécharger PDF</button>
     <button class="btn btn-outline" onclick="closeModal('modal-presence')">Fermer</button>
   </div>
-  <div id="print-zone"><div id="feuille-presence-content"></div></div>
+  <div id="presence-print-zone"><div id="feuille-presence-content"></div></div>
 </div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 (function(){
   var STAMP='reset_20260612';
@@ -432,6 +433,53 @@
     localStorage.setItem('_app_stamp',STAMP);
   }
 })();
+window.imprimerFiche = function() {
+  var el = document.getElementById('fiche-content');
+  if (!el || !el.innerHTML.trim()) return;
+  window.print();
+};
+
+window.telechargerPDF = function(elementId, nomFichier, orientation) {
+  var el = document.getElementById(elementId);
+  if (!el) return;
+  var btn = event && event.target;
+  if (btn) { btn.textContent = 'Génération…'; btn.disabled = true; }
+  var isLandscape = orientation === 'landscape';
+  var pw = isLandscape ? 1200 : 800;
+
+  // Conteneur de rendu hors-écran, dans le flux document à top:0 left:0
+  var wrapper = document.createElement('div');
+  wrapper.style.cssText = 'position:absolute;top:0;left:0;width:' + pw + 'px;background:#fff;z-index:99999;pointer-events:none';
+  var inner = document.createElement('div');
+  inner.style.cssText = 'width:100%;background:#fff;font-family:Arial,Helvetica,sans-serif';
+  inner.innerHTML = el.innerHTML;
+  wrapper.appendChild(inner);
+  document.body.appendChild(wrapper);
+
+  // Scroll en haut pour que top:0 soit dans le viewport
+  var savedScroll = window.scrollY;
+  window.scrollTo(0, 0);
+
+  setTimeout(function() {
+    var opt = {
+      margin: isLandscape ? [6, 6, 6, 6] : [8, 8, 8, 8],
+      filename: nomFichier,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: pw, logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: orientation || 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] }
+    };
+    html2pdf().set(opt).from(inner).save().then(function() {
+      document.body.removeChild(wrapper);
+      window.scrollTo(0, savedScroll);
+      if (btn) { btn.textContent = 'Télécharger PDF'; btn.disabled = false; }
+    }).catch(function() {
+      if (document.body.contains(wrapper)) document.body.removeChild(wrapper);
+      window.scrollTo(0, savedScroll);
+      if (btn) { btn.textContent = 'Télécharger PDF'; btn.disabled = false; }
+    });
+  }, 100);
+};
 window.onerror=function(msg,src,line,col,err){
   var d=document.getElementById('js-error-banner')||document.createElement('div');
   d.id='js-error-banner';d.style.cssText='position:fixed;top:0;left:0;right:0;background:#dc2626;color:white;padding:10px 16px;font-size:13px;z-index:999999;font-family:monospace;white-space:pre-wrap';
